@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">HDtest</string>
+    <string name="inbox">生理信号</string>
+    <string name="starred">123</string>
+    <string name="sent_mail">使用指南</string>
+    <string name="settings">设置</string>
+
+    <!--登录-->
+    <string name="strInputAccHint">输入帐号</string>
+    <string name="strAccInputLabel">帐号</string>
+    <string name="strPswInputLabel">密码</string>
+    <string name="login">登 录</string>
+    <string name="register">注册</string>
+    <string name="cancle">取消</string>
+    <string name="account_empty">用户名为空，请重新输入！</string>
+    <string name="pwd_empty">密码为空，请重新输入！</string>
+    <string name="register_fail">注册用户失败，请重新尝试！</string>
+    <string name="register_sucess">注册成功！</string>
+    <string name="login_sucess">登陆成功！</string>
+    <string name="login_fail">登陆失败！请输入正确的用户名与密码！</string>
+    <string name="name_already_exist">用户名：</string>
+    <string name="user_login_sucess">用户：</string>
+    <!--FragmentManage-->
+    <color name="actionbar_background">#0077d9</color>
+    <color name="textcolor">#fff</color>
+    <color name="headView">#00a7ff</color>
+    <color name="gray">#f3f3f3</color>
+    <string name="FirstFragment">心电</string>
+    <string name="SecondFragment">心音</string>
+    <string name="ThirdFragment">脉搏</string>
+    <string name="ForthFragment">4</string>
+    <!--BLEManage-->
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
