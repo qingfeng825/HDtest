@@ -11,7 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.lijinming.hdtest.R;
-import com.example.lijinming.hdtest.navigation.MainActivity;
+import com.example.lijinming.hdtest.navigation.NavigationActivity;
 
 public class LoginActivity extends Activity {
 
@@ -76,7 +76,7 @@ public class LoginActivity extends Activity {
 				/*loginView.setVisibility(View.GONE);
 				loginSuccessView.setVisibility(View.VISIBLE);
 				loginSuccessShow.setText(getString(R.string.user_login_sucess, userName));*/
-				Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+				Intent intent = new Intent(LoginActivity.this, NavigationActivity.class);
 				intent.putExtra("username",userName);
 				startActivity(intent);
 				Toast.makeText(this, getString(R.string.login_sucess),

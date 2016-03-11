@@ -12,10 +12,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,210 +30,219 @@ import java.util.List;
 
 public class BLEActivity extends Activity {
 
-    private final static int REQUEST_ENABLE_BT = 2001;
-    private ServiceConnection connection = new ServiceConnection() {
+	private static String TAG = "BLEActivity";
 
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
+	private final static int REQUEST_ENABLE_BT = 2001;
+	private ServiceConnection connection = new ServiceConnection() {
 
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            BLEService.LocalBinder binder = (BLEService.LocalBinder) service;
-            Tools.mBLEService = binder.getService();
-            if (Tools.mBLEService.initBle()) {
-                // scanBle(); // ÂºÄÂßãÊâ´ÊèèËÆæÂ§á
-                if (!Tools.mBLEService.mBluetoothAdapter.isEnabled()) {
-                    final Intent enableBtIntent = new Intent(
-                            BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                } else {
-                    scanBle(); // ÂºÄÂßãÊâ´ÊèèËÆæÂ§á
-                }
-            }
-        }
-    };
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+		}
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_ENABLE_BT) {
-            if (resultCode == RESULT_OK) {
-                scanBle(); // ÂºÄÂßãÊâ´ÊèèËÆæÂ§á
-            } else {
-                // finish();
-            }
-        }
-    }
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			Log.e(TAG, "onServiceConnected");
+			BLEService.LocalBinder binder = (BLEService.LocalBinder) service;
+			Tools.mBLEService = binder.getService();
+			if (Tools.mBLEService.initBle()) {
+				// scanBle(); // ø™ º…®√Ë…Ë±∏
+				Log.e(TAG, "initBle");
+				if (!Tools.mBLEService.mBluetoothAdapter.isEnabled()) {
+					Log.e(TAG, "disEnabled");
+					final Intent enableBtIntent = new Intent(
+							BluetoothAdapter.ACTION_REQUEST_ENABLE);
+					startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+				} else {
+					scanBle(); // ø™ º…®√Ë…Ë±∏
+				}
+			}
+		}
+	};
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ble);
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == REQUEST_ENABLE_BT) {
+			if (resultCode == RESULT_OK) {
+				scanBle(); // ø™ º…®√Ë…Ë±∏
+			} else {
+				// finish();
+			}
+		}
+	}
 
-        initView();
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		Log.e(TAG, "onCreate");
 
-        bindService(new Intent(this, BLEService.class), connection,
-                Context.BIND_AUTO_CREATE);
 
-    }
+		bindService(new Intent(this, BLEService.class), connection,
+				Context.BIND_AUTO_CREATE);
 
-    // ÂàùÂßãÂåñÊéß‰ª∂
-    private LayoutInflater mInflater;
-    private ListView ble_listview;
-    private List<MTBeacon> scan_devices = new ArrayList<MTBeacon>();
-    private List<MTBeacon> scan_devices_dis = new ArrayList<MTBeacon>();
-    private BaseAdapter list_adapter = new BaseAdapter() {
+		initView();
 
-        @SuppressLint("InflateParams")
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+	}
 
-            if (null == convertView) {
-                convertView = mInflater.inflate(R.layout.devicefmt, null);
-            }
+	// ≥ı ºªØøÿº˛
+	public LayoutInflater mInflater;
+	public ListView ble_listview;
+	public List<MTBeacon> scan_devices = new ArrayList<MTBeacon>();
+	public List<MTBeacon> scan_devices_dis = new ArrayList<MTBeacon>();
+	public BaseAdapter list_adapter = new BaseAdapter() {
 
-            TextView device_name_txt = (TextView) convertView
-                    .findViewById(R.id.device_name_txt);
-            TextView device_rssi_txt = (TextView) convertView
-                    .findViewById(R.id.device_rssi_txt);
-            TextView device_mac_txt = (TextView) convertView
-                    .findViewById(R.id.device_mac_txt);
+		@SuppressLint("InflateParams")
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
 
-            device_name_txt.setText(getItem(position).GetDevice().getName());
-            device_mac_txt.setText("Mac: "
-                    + getItem(position).GetDevice().getAddress());
-            device_rssi_txt.setText("Rssi: "
-                    + getItem(position).GetAveragerssi());
+			if (null == convertView) {
+				convertView = mInflater.inflate(R.layout.devicefmt, null);
+			}
 
-            return convertView;
-        }
+			TextView device_name_txt = (TextView) convertView
+					.findViewById(R.id.device_name_txt);
+			TextView device_rssi_txt = (TextView) convertView
+					.findViewById(R.id.device_rssi_txt);
+			TextView device_mac_txt = (TextView) convertView
+					.findViewById(R.id.device_mac_txt);
 
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
+			device_name_txt.setText(getItem(position).GetDevice().getName());
+			device_mac_txt.setText("Mac: "
+					+ getItem(position).GetDevice().getAddress());
+			device_rssi_txt.setText("Rssi: "
+					+ getItem(position).GetAveragerssi());
 
-        @Override
-        public MTBeacon getItem(int position) {
-            return scan_devices_dis.get(position);
-        }
+			return convertView;
+		}
 
-        @Override
-        public int getCount() {
-            return scan_devices_dis.size();
-        }
-    };
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
 
-    private void initView() {
-        mInflater = LayoutInflater.from(this);
-        ble_listview = (ListView) findViewById(R.id.ble_listview);
+		@Override
+		public MTBeacon getItem(int position) {
+			return scan_devices_dis.get(position);
+		}
 
-        ble_listview.setAdapter(list_adapter);
-        ble_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		@Override
+		public int getCount() {
+			return scan_devices_dis.size();
+		}
+	};
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                // scan_flag = false;
-                // Tools.mBLEService.stopscanBle(mLeScanCallback);
-                Intent intent = new Intent(getApplicationContext(),
-                        ServiceActivity.class);
-                intent.putExtra("device", scan_devices_dis.get(position)
-                        .GetDevice());
-                startActivity(intent);
-            }
-        });
-    }
+	private void initView() {
+		Log.e(TAG, "initView");
+		mInflater = LayoutInflater.from(this);
+		ble_listview = (ListView) findViewById(R.id.ble_listview);
 
-    // ÂºÄÂßãÊâ´Êèè
-    private int scan_timer_select = 0;
-    private boolean scan_flag = true;
-    private Handler search_timer = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+		ble_listview.setAdapter(list_adapter);
+		Log.e(TAG, "initView1");
+		ble_listview.setOnItemClickListener(new OnItemClickListener() {
 
-            search_timer.sendEmptyMessageDelayed(0, 500);
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// scan_flag = false;
+				// Tools.mBLEService.stopscanBle(mLeScanCallback);
+				Intent intent = new Intent(getApplicationContext(),
+						ServiceActivity.class);
+				intent.putExtra("device", scan_devices_dis.get(position)
+						.GetDevice());
+				startActivity(intent);
+			}
+		});
+	}
 
-            if (!scan_flag) {
-                return;
-            }
+	// ø™ º…®√Ë
+	private int scan_timer_select = 0;
+	private boolean scan_flag = true;
+	private Handler search_timer = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
 
-            if (!Tools.mBLEService.mBluetoothAdapter.isEnabled()) {
-                return;
-            }
+			search_timer.sendEmptyMessageDelayed(0, 500);
 
-            // Êâ´ÊèèÊó∂Èó¥Ë∞ÉÂ∫¶
-            switch (scan_timer_select) {
-                case 1: // ÂºÄÂßãÊâ´Êèè
-                    Tools.mBLEService.scanBle(mLeScanCallback);
-                    break;
-                case 3: // ÂÅúÊ≠¢Êâ´Êèè(ÁªìÁÆó)
-                    Tools.mBLEService.stopscanBle(mLeScanCallback); // ÂÅúÊ≠¢Êâ´Êèè
+			if (!scan_flag) {
+				return;
+			}
+			
+			if (!Tools.mBLEService.mBluetoothAdapter.isEnabled()) {
+				return;
+			}
 
-                    for (int i = 0; i < scan_devices.size();) { // Èò≤Êäñ
-                        if (scan_devices.get(i).CheckSearchcount() > 2) {
-                            scan_devices.remove(i);
-                        } else {
-                            i++;
-                        }
-                    }
+			// …®√Ë ±º‰µ˜∂»
+			switch (scan_timer_select) {
+			case 1: // ø™ º…®√Ë
+				Tools.mBLEService.scanBle(mLeScanCallback);
+				break;
+			case 3: // Õ£÷π…®√Ë(Ω·À„)
+				Tools.mBLEService.stopscanBle(mLeScanCallback); // Õ£÷π…®√Ë
 
-                    scan_devices_dis.clear(); // ÊòæÁ§∫Âá∫Êù•
-                    for (MTBeacon device : scan_devices) {
-                        scan_devices_dis.add(device);
-                    }
-                    list_adapter.notifyDataSetChanged();
+				for (int i = 0; i < scan_devices.size();) { // ∑¿∂∂
+					if (scan_devices.get(i).CheckSearchcount() > 2) {
+						scan_devices.remove(i);
+					} else {
+						i++;
+					}
+				}
 
-                    break;
+				scan_devices_dis.clear(); // œ‘ æ≥ˆ¿¥
+				for (MTBeacon device : scan_devices) {
+					scan_devices_dis.add(device);
+				}
+				list_adapter.notifyDataSetChanged();
 
-                default:
-                    break;
-            }
-            scan_timer_select = (scan_timer_select + 1) % 4;
-        }
+				break;
 
-    };
-    private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
+			default:
+				break;
+			}
+			scan_timer_select = (scan_timer_select + 1) % 4;
+		}
 
-        @Override
-        public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-            int i = 0;
-            // Ê£ÄÊü•ÊòØÂê¶ÊòØÊêúÁ¥¢ËøáÁöÑËÆæÂ§áÔºåÂπ∂‰∏îÊõ¥Êñ∞
-            for (i = 0; i < scan_devices.size(); i++) {
-                if (0 == device.getAddress().compareTo(
-                        scan_devices.get(i).GetDevice().getAddress())) {
-                    scan_devices.get(i).ReflashInf(device, rssi, scanRecord); // Êõ¥Êñ∞‰ø°ÊÅØ
-                    return;
-                }
-            }
+	};
+	private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
 
-            // Â¢ûÂä†Êñ∞ËÆæÂ§á
-            scan_devices.add(new MTBeacon(device, rssi, scanRecord));
-        }
-    };
+		@Override
+		public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
+			int i = 0;
+			// ºÏ≤È «∑Ò «À—À˜π˝µƒ…Ë±∏£¨≤¢«“∏¸–¬
+			for (i = 0; i < scan_devices.size(); i++) {
+				if (0 == device.getAddress().compareTo(
+						scan_devices.get(i).GetDevice().getAddress())) {
+					scan_devices.get(i).ReflashInf(device, rssi, scanRecord); // ∏¸–¬–≈œ¢
+					return;
+				}
+			}
 
-    private void scanBle() {
-        search_timer.sendEmptyMessageDelayed(0, 500);
-    }
+			// ‘ˆº”–¬…Ë±∏
+			scan_devices.add(new MTBeacon(device, rssi, scanRecord));
+		}
+	};
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        scan_flag = false;
-        Tools.mBLEService.stopscanBle(mLeScanCallback);
-    }
+	private void scanBle() {
+		search_timer.sendEmptyMessageDelayed(0, 500);
+	}
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        scan_flag = true;
-    }
+	@Override
+	protected void onPause() {
+		super.onPause();
+		scan_flag = false;
+		Tools.mBLEService.stopscanBle(mLeScanCallback);
+	}
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbindService(connection);
-    }
+	@Override
+	protected void onResume() {
+		super.onResume();
+		scan_flag = true;
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unbindService(connection);
+	}
 }

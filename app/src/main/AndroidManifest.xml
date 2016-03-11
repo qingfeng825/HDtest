@@ -2,8 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.lijinming.hdtest" >
 
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+
 
     <application
         android:allowBackup="true"
@@ -19,11 +29,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".navigation.MainActivity"
+            android:name=".navigation.NavigationActivity"
             android:theme="@style/nLiveoDrawer" >
         </activity>
-        <activity android:name=".bleManage.BLEActivity" >
-        </activity>
+        <activity android:name=".bleManage.BLEActivity"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".bleManage.TalkActivity"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".bleManage.ServiceActivity" />
+
+        <service android:name=".bleManage.BLEService" >
+        </service>
+
     </application>
 
 </manifest>

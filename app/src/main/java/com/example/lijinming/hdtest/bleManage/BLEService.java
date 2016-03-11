@@ -1,6 +1,5 @@
 package com.example.lijinming.hdtest.bleManage;
 
-import android.annotation.TargetApi;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -13,10 +12,8 @@ import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
 
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class BLEService extends Service {
 
 	public final static String ACTION_DATA_CHANGE = "com.example.bluetooth.le.ACTION_DATA_CHANGE";
@@ -29,9 +26,9 @@ public class BLEService extends Service {
 	public final static String ACTION_WRITE_Descriptor_OVER = "com.example.bluetooth.le.ACTION_WRITE_Descriptor_OVER";
 	public final static String ACTION_ServicesDiscovered_OVER = "com.example.bluetooth.le.ACTION_ServicesDiscovered_OVER";
 
-	public BluetoothManager mBluetoothManager;
-	public BluetoothAdapter mBluetoothAdapter;
-	public BluetoothGatt mBluetoothGatt;
+	public  BluetoothManager mBluetoothManager;
+	public  BluetoothAdapter mBluetoothAdapter;
+	public  BluetoothGatt mBluetoothGatt;
 	private boolean connect_flag = false;
 
 	private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {

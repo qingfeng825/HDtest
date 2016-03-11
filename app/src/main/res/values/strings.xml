@@ -32,6 +32,9 @@
     <!--BLEManage-->
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="BLEmanage">蓝牙通信</string>
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--menu-->
+    <string name="setting">退出</string>
 </resources>

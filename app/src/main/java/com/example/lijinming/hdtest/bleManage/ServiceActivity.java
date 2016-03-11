@@ -1,6 +1,5 @@
 package com.example.lijinming.hdtest.bleManage;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothDevice;
@@ -12,7 +11,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,7 +21,6 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.Toast;
 
 import com.example.lijinming.hdtest.R;
-
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -187,8 +184,7 @@ public class ServiceActivity extends Activity {
 	}
 	
 	// ∂¡»°œﬂ≥Ã
-	private class readNameThread extends Thread {
-		@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+	private class readNameThread extends Thread{
 		@Override
 		public void run() {
 			super.run();
