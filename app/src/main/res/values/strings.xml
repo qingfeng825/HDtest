@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">HDtest</string>
     <string name="inbox">生理信号</string>
-    <string name="starred">123</string>
+    <string name="starred">健康方案</string>
     <string name="sent_mail">使用指南</string>
-    <string name="settings">设置</string>
+    <string name="settings">设置</string>\
+    <string name="account">账号</string>
 
     <!--登录-->
     <string name="strInputAccHint">输入帐号</string>

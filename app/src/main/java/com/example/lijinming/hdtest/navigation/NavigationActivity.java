@@ -38,14 +38,15 @@ public class NavigationActivity extends NavigationLiveo implements
     private HelpLiveo mHelpLiveo;
     private final static int REQUEST_ENABLE_BT = 2001;
 
+
     @Override
     public void onInt(Bundle savedInstanceState) {
         // User Information
         Intent mIntent = getIntent();
         String username = mIntent.getStringExtra("username");
 
-        this.userName.setText("账号:" + username);
-        this.userEmail.setText("rudsonlive@gmail.com");
+        this.userName.setText("account:"+username);
+        this.userEmail.setText("   ");
         this.userPhoto.setImageResource(R.drawable.background);
         this.userBackground.setImageResource(R.drawable.ic_user_background_first);
 
@@ -66,10 +67,10 @@ public class NavigationActivity extends NavigationLiveo implements
                 .startingPosition(2) //Starting position in the list
                 .addAllHelpItem(mHelpLiveo.getHelp())
                 .footerItem(R.string.settings, R.mipmap.ic_launcher)
-                .footerSecondItem(R.string.BLEmanage,R.drawable.bluetooth)
+//                .footerSecondItem(R.string.BLEmanage,R.drawable.bluetooth)
                 .setOnClickUser(onClickPhoto)
                 .setOnClickFooter(onClickFooter)
-                .setOnClickFooterSecond(onClickFooter)
+//                .setOnClickFooterSecond(onClickFooter)
                 .build();
         int position = this.getCurrentPosition();
         this.setElevationToolBar(position != 2 ? 15 : 0);

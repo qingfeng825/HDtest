@@ -8,16 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -28,16 +23,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.example.lijinming.hdtest.DataManage.MyInternalStorage;
 import com.example.lijinming.hdtest.R;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 public class TalkActivity extends Activity implements OnClickListener {
 
 	private BluetoothGattCharacteristic mBluetoothGattCharacteristic;
+
+	MyInternalStorage mMyInternalStorage = new MyInternalStorage(this);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +48,11 @@ public class TalkActivity extends Activity implements OnClickListener {
 				.getServices().get(intent.getIntExtra("one", 0))
 				.getCharacteristics().get(intent.getIntExtra("two", 0));
 
-		setBroadcastReceiver(); // 设置广播监听
+		setBroadcastReceiver(); // 设置广播监听g
 
 		initView(); // 初始化控件
 	}
+
 
 	// 设置广播监听
 	private BroadcastReceiver bluetoothReceiver;
@@ -137,10 +137,16 @@ public class TalkActivity extends Activity implements OnClickListener {
 		default:
 			break;
 		}
+		readText.setText(tmp);
+		try {
+			mMyInternalStorage.append(tmp);//没读到你一个数据就存入到
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-		ChatMsgFmt entity2 = new ChatMsgFmt("Device", tmp, MESSAGE_FROM.OTHERS);
-		chat_list.add(entity2);
-		chat_list_adapter.notifyDataSetChanged();
+		//		ChatMsgFmt entity2 = new ChatMsgFmt("Device", tmp, MESSAGE_FROM.OTHERS);
+//		chat_list.add(entity2);
+//		chat_list_adapter.notifyDataSetChanged();
 	}
 
 	// 初始化控件
@@ -158,9 +164,11 @@ public class TalkActivity extends Activity implements OnClickListener {
 	private CheckBox send_onTime_checkbox;
 	private EditText send_time_edit;
 	private LinearLayout writeable_Layout;
+	private TextView readText;
+	private TextView writeText;
 
-	private List<ChatMsgFmt> chat_list = new ArrayList<ChatMsgFmt>();
-	private ChatAdapater chat_list_adapter;
+//	private List<ChatMsgFmt> chat_list = new ArrayList<ChatMsgFmt>();
+//	private ChatAdapater chat_list_adapter;
 	private ArrayAdapter<String> fmt_adapter;
 	private static final String FMT_SELCET[] = { "Str", "Hex", "Dec" };
 	private int write_fmt_int; // 发送数据格式 整形
@@ -168,19 +176,21 @@ public class TalkActivity extends Activity implements OnClickListener {
 	private int proper = 0; // 通道权限
 
 	private void initView() {
+		writeText =(TextView)findViewById(R.id.write);
+		readText =(TextView)findViewById(R.id.read);
 		talking_conect_flag_txt = (TextView) findViewById(R.id.talking_conect_flag_txt);
 		talking_read_btn = (Button) findViewById(R.id.talking_read_btn);
-		talking_clear_btn = (Button) findViewById(R.id.talking_clear_btn);
+//		talking_clear_btn = (Button) findViewById(R.id.talking_clear_btn);
 		read_fmt_select = (Spinner) findViewById(R.id.read_fmt_select);
 		talking_stopdis_btn = (ToggleButton) findViewById(R.id.talking_stopdis_btn);
-		chatist = (ListView) findViewById(R.id.chatist);
+//		chatist = (ListView) findViewById(R.id.chatist);
 		write_fmt_select = (Spinner) findViewById(R.id.write_fmt_select);
 		edit_string_id = (EditText) findViewById(R.id.edit_string_id);
 		edit_hex_id = (EditText) findViewById(R.id.edit_hex_id);
 		edit_shi_id = (EditText) findViewById(R.id.edit_shi_id);
 		sendbuttonid = (Button) findViewById(R.id.sendbuttonid);
-		send_onTime_checkbox = (CheckBox) findViewById(R.id.send_onTime_checkbox);
-		send_time_edit = (EditText) findViewById(R.id.send_time_edit);
+//		send_onTime_checkbox = (CheckBox) findViewById(R.id.send_onTime_checkbox);
+//		send_time_edit = (EditText) findViewById(R.id.send_time_edit);
 		writeable_Layout = (LinearLayout) findViewById(R.id.writeable_Layout);
 
 		// 初始化控件参数
@@ -246,13 +256,13 @@ public class TalkActivity extends Activity implements OnClickListener {
 					}
 
 				});
-		chat_list_adapter = new ChatAdapater(getApplicationContext());
-		chatist.setAdapter(chat_list_adapter);
+//		chat_list_adapter = new ChatAdapater(getApplicationContext());
+//		chatist.setAdapter(chat_list_adapter);
 		talking_read_btn.setOnClickListener(this);
-		talking_clear_btn.setOnClickListener(this);
+//		talking_clear_btn.setOnClickListener(this);
 		talking_stopdis_btn.setOnClickListener(this);
 		sendbuttonid.setOnClickListener(this);
-		send_onTime_checkbox.setOnClickListener(this);
+//		send_onTime_checkbox.setOnClickListener(this);
 
 		// 查看是有什么权限
 		proper = mBluetoothGattCharacteristic.getProperties();
@@ -276,124 +286,11 @@ public class TalkActivity extends Activity implements OnClickListener {
 		}
 	}
 
-	// 消息适配器
-	private class ChatAdapater extends BaseAdapter {
 
-		private LayoutInflater mInflater;
-
-		@SuppressWarnings("unused")
-		public ChatAdapater(Context context) {
-			mInflater = LayoutInflater.from(context);
-		}
-
-		@Override
-		public int getCount() {
-			return chat_list.size();
-		}
-
-		@Override
-		public ChatMsgFmt getItem(int position) {
-			return chat_list.get(position);
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-
-			if (getItem(position).from == MESSAGE_FROM.ME) {
-				convertView = mInflater.inflate(R.layout.msg_to_fmt, null);
-			} else {
-				convertView = mInflater.inflate(R.layout.msg_from_fmt, null);
-			}
-
-			TextView msg_nameid = (TextView) convertView
-					.findViewById(R.id.msg_nameid);
-			TextView msg_id = (TextView) convertView.findViewById(R.id.msg_id);
-
-			msg_nameid.setText(getItem(position).getName());
-			msg_id.setText(getItem(position).getMsg());
-
-			return convertView;
-		}
-
-	}
-
-	// 消息是自己发送还是接收
-	private enum MESSAGE_FROM {
-		ME, OTHERS
-	}
-
-	// 聊天内容
-	private class ChatMsgFmt {
-		private String name; // 名字
-		private String msg; // 信息
-		private MESSAGE_FROM from; // 接受还是发送
-
-		public String getName() {
-			return name;
-		}
-
-		public String getMsg() {
-			return msg;
-		}
-
-		public MESSAGE_FROM getFrom() {
-			return from;
-		}
-
-		public ChatMsgFmt(String name, String msg, MESSAGE_FROM from) {
-			this.name = name;
-			this.msg = msg;
-			this.from = from;
-		}
-	}
-
-	// 定时发送数据
-	private Handler sendontime_handl = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-
-			if (!Tools.mBLEService.isConnected()) {
-				send_onTime_checkbox.setChecked(false);
-			}
-
-			if (!send_onTime_checkbox.isChecked()) {
-				return;
-			}
-			String delay_time_str = send_time_edit.getText().toString();
-			int delay_time_int = 0;
-			if (delay_time_str.length() == 0) {
-				send_time_edit.setText("10");
-				delay_time_int = 10;
-			} else {
-				delay_time_int = Integer.parseInt(send_time_edit.getText()
-						.toString());
-			}
-			sendontime_handl.sendEmptyMessageDelayed(0, delay_time_int);
-
-			byte[] sendmsg = getMsgEdit(false); // 发送数据
-			if (sendmsg == null) {
-				return;
-			}
-			mBluetoothGattCharacteristic.setValue(sendmsg);
-			Tools.mBLEService.mBluetoothGatt
-					.writeCharacteristic(mBluetoothGattCharacteristic);
-		}
-	};
 
 	// 按钮监听
 	@Override
 	public void onClick(View v) {
-
-		if (v == talking_clear_btn) { // 清空会话
-			chat_list.clear();
-			chat_list_adapter.notifyDataSetChanged();
-			return;
-		}
 		if (!Tools.mBLEService.isConnected()) {
 			Toast.makeText(getApplicationContext(), "已断开连接", Toast.LENGTH_LONG)
 					.show();
@@ -410,15 +307,19 @@ public class TalkActivity extends Activity implements OnClickListener {
 					.writeCharacteristic(mBluetoothGattCharacteristic);
 			return;
 		}
-		if (v == talking_read_btn) { // 读取按钮
-			Tools.mBLEService.mBluetoothGatt
-					.readCharacteristic(mBluetoothGattCharacteristic);
+		if (v == talking_read_btn) { // 读取按钮 按下之后每2ms读取一次
+
+			Timer timer = new Timer();
+			timer.schedule(new MyTask(), 0, 2);
 			return;
 		}
-		if (v == send_onTime_checkbox) { // 定时发送数据
-			if (send_onTime_checkbox.isChecked()) {
-				sendontime_handl.sendEmptyMessage(0);
-			}
+	}
+	class MyTask extends TimerTask {
+
+		@Override
+		public void run() {
+			Tools.mBLEService.mBluetoothGatt
+					.readCharacteristic(mBluetoothGattCharacteristic);
 		}
 	}
 
@@ -484,9 +385,10 @@ public class TalkActivity extends Activity implements OnClickListener {
 			return null;
 		// 显示
 		if (dis_flag) {
-			ChatMsgFmt entity = new ChatMsgFmt("Me", tmp_str, MESSAGE_FROM.ME);
+			writeText.setText(tmp_str);
+			/*ChatMsgFmt entity = new ChatMsgFmt("Me", tmp_str, MESSAGE_FROM.ME);
 			chat_list.add(entity);
-			chat_list_adapter.notifyDataSetChanged();
+			chat_list_adapter.notifyDataSetChanged();*/
 		}
 
 		return write_msg_byte;
@@ -517,4 +419,5 @@ public class TalkActivity extends Activity implements OnClickListener {
 		}
 
 	}
+
 }

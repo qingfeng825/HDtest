@@ -30,16 +30,7 @@
             android:textSize="15sp"
             android:visibility="invisible" />
 
-        <Button
-            android:id="@+id/talking_clear_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@id/talking_read_btn"
-            android:text="清空"
-            android:textColor="#FFFFFF"
-            android:textSize="15sp" />
+
 
         <Spinner
             android:id="@+id/read_fmt_select"
@@ -61,21 +52,15 @@
             android:textOff="停止"
             android:textOn="继续"
             android:textSize="15sp" />
-    </RelativeLayout>
 
-    <ListView
-        android:id="@+id/chatist"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_margin="10dp"
-        android:layout_weight="1"
-        android:divider="@null"
-        android:dividerHeight="5dp"
-        android:drawSelectorOnTop="false"
-        android:padding="5dp"
-        android:scrollbars="vertical"
-        android:stackFromBottom="true"
-        android:transcriptMode="alwaysScroll" />
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/read"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="read"/>
+
+
 
     <LinearLayout
         android:id="@+id/writeable_Layout"
@@ -84,35 +69,7 @@
         android:orientation="vertical"
         android:visibility="gone" >
 		
-        <LinearLayout 
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
-            
-            <CheckBox 
-                android:id="@+id/send_onTime_checkbox"
-                android:text="定时发送"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                />
-            
-            <EditText
-                android:text="1000"
-                android:id="@+id/send_time_edit"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:inputType="numberDecimal" />
 
-            <TextView 
-                android:text="ms"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-            
-        </LinearLayout>
-        
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -161,5 +118,10 @@
                 android:textSize="20sp" />
         </LinearLayout>
     </LinearLayout>
+    <TextView
+        android:id="@+id/write"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="write"/>
 
 </LinearLayout>
