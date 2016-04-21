@@ -26,7 +26,9 @@ import com.example.lijinming.hdtest.R;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ *BLEActivity主要进行扫描显示可用的BLE设备
+ *  */
 
 public class BLEActivity extends Activity {
 
@@ -37,6 +39,8 @@ public class BLEActivity extends Activity {
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
+
+
 		}
 
 		@Override
@@ -47,8 +51,11 @@ public class BLEActivity extends Activity {
 			if (Tools.mBLEService.initBle()) {
 				// scanBle(); // 开始扫描设备
 				Log.e(TAG, "initBle");
+
 				if (!Tools.mBLEService.mBluetoothAdapter.isEnabled()) {
+
 					Log.e(TAG, "disEnabled");
+
 					final Intent enableBtIntent = new Intent(
 							BluetoothAdapter.ACTION_REQUEST_ENABLE);
 					startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
@@ -75,8 +82,8 @@ public class BLEActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		Log.e(TAG, "onCreate");
 
+		Log.e(TAG, "onCreate");
 
 		bindService(new Intent(this, BLEService.class), connection,
 				Context.BIND_AUTO_CREATE);

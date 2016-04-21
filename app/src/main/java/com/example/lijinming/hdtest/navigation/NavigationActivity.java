@@ -107,10 +107,10 @@ public class NavigationActivity extends NavigationLiveo implements
         FragmentManager mFragmentManager = getSupportFragmentManager();
         switch (position){
             case 0:
-                mFragment = FragmentManage.newInstance(mHelpLiveo.get(position).getName());
+                mFragment = HealthFragment.newInstance(mHelpLiveo.get(position).getName());
                 break;
             case 1:
-                mFragment = HealthFragment.newInstance(mHelpLiveo.get(position).getName());
+                mFragment = FragmentManage.newInstance(mHelpLiveo.get(position).getName());
                 break;
 
             default:

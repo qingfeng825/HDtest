@@ -139,7 +139,7 @@ public class TalkActivity extends Activity implements OnClickListener {
 		}
 		readText.setText(tmp);
 		try {
-			mMyInternalStorage.append(tmp);//没读到你一个数据就存入到
+			mMyInternalStorage.append(tmp);//读到你一个数据就存入到SD Card
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

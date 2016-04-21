@@ -23,7 +23,6 @@ public class BLEService extends Service {
 	public final static String ACTION_WRITE_OVER = "com.example.bluetooth.le.ACTION_WRITE_OVER";
 	public final static String ACTION_READ_OVER = "com.example.bluetooth.le.ACTION_READ_OVER";
 	public final static String ACTION_READ_Descriptor_OVER = "com.example.bluetooth.le.ACTION_READ_Descriptor_OVER";
-	public final static String ACTION_WRITE_Descriptor_OVER = "com.example.bluetooth.le.ACTION_WRITE_Descriptor_OVER";
 	public final static String ACTION_ServicesDiscovered_OVER = "com.example.bluetooth.le.ACTION_ServicesDiscovered_OVER";
 
 	public  BluetoothManager mBluetoothManager;

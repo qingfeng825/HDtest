@@ -15,7 +15,6 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 import com.example.lijinming.hdtest.R;
 
 import java.util.ArrayList;
@@ -54,6 +53,7 @@ ForthFragment.OnFragmentInteractionListener*/{
     Fragment home3;
     Fragment home4;
 
+    private MyPagerAdapter pageAdapter;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -65,7 +65,6 @@ ForthFragment.OnFragmentInteractionListener*/{
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment FragmentManage.
      */
     // TODO: Rename and change types and number of parameters
@@ -151,27 +150,33 @@ ForthFragment.OnFragmentInteractionListener*/{
         tvTabNew = (TextView) parentView.findViewById(R.id.tv_tab_1);
         tvTabHot = (TextView) parentView.findViewById(R.id.tv_tab_2);
         monthHot = (TextView) parentView.findViewById(R.id.tv_tab_3);
-        dayHot = (TextView) parentView.findViewById(R.id.tv_tab_4);
+//        dayHot = (TextView) parentView.findViewById(R.id.tv_tab_4);
         tvTabNew.setOnClickListener(new MyOnClickListener(0));
         tvTabHot.setOnClickListener(new MyOnClickListener(1));
         monthHot.setOnClickListener(new MyOnClickListener(2));
-        dayHot.setOnClickListener(new MyOnClickListener(3));
+//        dayHot.setOnClickListener(new MyOnClickListener(3));
 
     }
 
     private void InitViewPager(View parentView) {
+
+
+
         mPager = (ViewPager) parentView.findViewById(R.id.viewPaper);
+
+
+
         fragmentsList = new ArrayList<Fragment>();
 
         home1 = new FirstFragment();
         home2 = new SecondFragment();
         home3 = new ThirdFragment();
-        home4 = new ForthFragment();
+//        home4 = new ForthFragment();
 
         fragmentsList.add(home1);
         fragmentsList.add(home2);
         fragmentsList.add(home3);
-        fragmentsList.add(home4);
+//        fragmentsList.add(home4);
 
 
         mPager.setAdapter(new MyPagerAdapter(getChildFragmentManager(), fragmentsList));
@@ -186,9 +191,9 @@ ForthFragment.OnFragmentInteractionListener*/{
         DisplayMetrics dm = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
         int screenW = dm.widthPixels;
-        offset = (int) ((screenW / 4.0 - bottomLineWidth) / 2);
+        offset = (int) ((screenW / 3.0 - bottomLineWidth) / 2);
         //int avg = (int) (screenW / num);
-        position_one = (int) (screenW / 4.0);
+        position_one = (int) (screenW / 3.0);
         position_two = position_one * 2;
         position_three = position_one * 3;
     }
@@ -207,21 +212,22 @@ ForthFragment.OnFragmentInteractionListener*/{
 
     public class MyOnPageChangeListener implements ViewPager.OnPageChangeListener {
 
+
         @Override
         public void onPageSelected(int arg0) {
             Animation animation = null;
             switch (arg0) {
                 case 0:
                     if (currIndex == 1) {
-                        animation = new TranslateAnimation(position_one, 0, 0, 0);
+                        animation = new TranslateAnimation(position_one, 0, 0,0);
                         //tvTabHot.setTextColor(resources.getColor(R.color.lightwhite));
                     } else if (currIndex == 2) {
                         animation = new TranslateAnimation(position_two, 0, 0, 0);
                         // monthHot.setTextColor(resources.getColor(R.color.lightwhite));
-                    } else if (currIndex == 3) {
+                    }/* else if (currIndex == 3) {
                         animation = new TranslateAnimation(position_three, 0, 0, 0);
                         // dayHot.setTextColor(resources.getColor(R.color.lightwhite));
-                    }
+                    }*/
                     //tvTabNew.setTextColor(resources.getColor(R.color.white));
                     break;
 
@@ -232,10 +238,10 @@ ForthFragment.OnFragmentInteractionListener*/{
                     } else if (currIndex == 2) {
                         animation = new TranslateAnimation(position_two, position_one, 0, 0);
                         // monthHot.setTextColor(resources.getColor(R.color.lightwhite));
-                    } else if (currIndex == 3) {
+                    } /*else if (currIndex == 3) {
                         animation = new TranslateAnimation(position_three, position_one, 0, 0);
                         // dayHot.setTextColor(resources.getColor(R.color.lightwhite));
-                    }
+                    }*/
                     //tvTabHot.setTextColor(resources.getColor(R.color.white));
                     break;
                 case 2:
@@ -245,13 +251,13 @@ ForthFragment.OnFragmentInteractionListener*/{
                     } else if (currIndex == 1) {
                         animation = new TranslateAnimation(position_one, position_two, 0, 0);
                         // tvTabHot.setTextColor(resources.getColor(R.color.lightwhite));
-                    } else if (currIndex == 3) {
+                    } /*else if (currIndex == 3) {
                         animation = new TranslateAnimation(position_three, position_two, 0, 0);
                         //                            dayHot.setTextColor(resources.getColor(R.color.lightwhite));
-                    }
+                    }*/
                     // monthHot.setTextColor(resources.getColor(R.color.white));
                     break;
-                case 3:
+              /*  case 3:
                     if (currIndex == 0) {
                         animation = new TranslateAnimation(0, position_three, 0, 0);
                         //tvTabNew.setTextColor(resources.getColor(R.color.lightwhite));
@@ -263,8 +269,9 @@ ForthFragment.OnFragmentInteractionListener*/{
                         //                            monthHot.setTextColor(resources.getColor(R.color.lightwhite));
                     }
                     //dayHot.setTextColor(resources.getColor(R.color.white));
-                    break;
+                    break;*/
             }
+
             currIndex = arg0;
             animation.setFillAfter(true);
             animation.setDuration(300);

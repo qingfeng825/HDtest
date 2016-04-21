@@ -135,6 +135,7 @@ public class ServiceActivity extends Activity {
 	private boolean connect_flag = false;
 	private boolean bind_flag = false;
 	private BluetoothDevice device;
+	//一个Handler对应一个线程，这里的线程是主线程。但是为什么可以写三个Handler?
 	private Handler dis_services_handl = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -208,10 +209,7 @@ public class ServiceActivity extends Activity {
 					if (connect_flag) {
 						break;
 					}
-					//if(i>1){
-					//	connect_fail_handl.sendEmptyMessage(0);
-					//	return;
-					//}
+
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();

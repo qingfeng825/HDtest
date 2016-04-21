@@ -36,4 +36,5 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
         return super.getItemPosition(object);
     }
 
+
 }

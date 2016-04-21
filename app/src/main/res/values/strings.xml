@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">HDtest</string>
-    <string name="inbox">生理信号</string>
-    <string name="starred">健康方案</string>
-    <string name="sent_mail">使用指南</string>
+    <string name="inbox">实时显示</string>
+    <string name="starred">波形回放</string>
+    <string name="sent_mail">数据管理</string>
     <string name="settings">设置</string>\
     <string name="account">账号</string>
 
@@ -26,15 +26,16 @@
     <color name="textcolor">#fff</color>
     <color name="headView">#00a7ff</color>
     <color name="gray">#f3f3f3</color>
-    <string name="FirstFragment">心电</string>
-    <string name="SecondFragment">心音</string>
-    <string name="ThirdFragment">脉搏</string>
+    <string name="FirstFragment">心电回放</string>
+    <string name="SecondFragment">心音回放</string>
+    <string name="ThirdFragment">脉搏回放</string>
     <string name="ForthFragment">4</string>
+    <string name="DataPlayBack">数据回放</string>
     <!--BLEManage-->
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="BLEmanage">蓝牙通信</string>
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <!--menu-->
     <string name="setting">退出</string>

@@ -14,7 +14,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Administrator on 2016/3/24.
@@ -125,11 +127,17 @@ public class MyInternalStorage {
         return context.deleteFile(filename);
     }
     /**
-     * 获取内部存储路径下的所有文件名
+     * 获取SD card指定存储路径下的所有文件名
      * @return 文件名数组
      */
-    public String[] queryAllFile() {
-        return context.fileList();
+    public List<String> queryAllFile() {
+        File file = new File(Environment.getExternalStorageDirectory()+"/MyDATA/");
+        File [] files  =  file.listFiles();
+        List <String> pathname = new ArrayList<>();
+        for (File f:files){
+            pathname.add(f.toString());
+        }
+        return pathname;
     }
 
 
