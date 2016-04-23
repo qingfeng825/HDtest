@@ -3,14 +3,67 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-    <ExpandableListView 
-        android:id="@+id/service_list_view"
+    <ToggleButton
+        android:id="@+id/Realstart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        android:background="@drawable/devicefmt"
-        android:drawSelectorOnTop="false"
-        />
+        android:layout_height="wrap_content"
+        android:textOff="停止"
+        android:textOn="开始"
+        android:checked="false"/>
+    <TableLayout android:layout_width="match_parent"
+                 android:layout_height="wrap_content">
+        <TableRow>
+            <TextView
+                android:id="@+id/pulsePlay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="脉搏数据"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+
+                android:text="Pulse"/>
+
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:id="@+id/soundPlay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+
+                android:text="心音数据"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+
+                android:layout_height="wrap_content"
+                android:text="Sound"/>
+
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:id="@+id/ecgPlay"
+                android:layout_weight="1"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="心电数据"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+
+                android:layout_height="wrap_content"
+                android:text="ECG"/>
+
+        </TableRow>
+
+
+    </TableLayout>
+
+
+
 
 </LinearLayout>

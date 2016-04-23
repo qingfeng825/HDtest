@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,23 +13,25 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.view.View;
-import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.SimpleExpandableListAdapter;
+import android.util.Log;
+import android.widget.CompoundButton;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.lijinming.hdtest.R;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 public class ServiceActivity extends Activity {
+	private static final String TAG = "ServiceActivity";
+	private BluetoothGattCharacteristic mBluetoothGattCharacteristic, gattCharacteristicPulse,
+			gattCharacteristicECG,gattCharacteristicSound;
 
+	private ToggleButton mToggleButton;
+	private TextView pulsePlay,ecgPlay,soundPlay;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,6 +52,13 @@ public class ServiceActivity extends Activity {
 		intentFilter.addAction(BLEService.ACTION_ServicesDiscovered_OVER);
 		intentFilter.addAction(BLEService.ACTION_STATE_CONNECTED);
 		intentFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+		intentFilter.addAction(BLEService.ACTION_ECG_READ_OVER);
+		intentFilter.addAction(BLEService.ACTION_SOUND_READ_OVER);
+		intentFilter.addAction(BLEService.ACTION_PULSE_READ_OVER);
+		intentFilter.addAction(BLEService.ACTION_RSSI_READ);
+		intentFilter.addAction(BLEService.ACTION_STATE_CONNECTED);
+		intentFilter.addAction(BLEService.ACTION_STATE_DISCONNECTED);
+		intentFilter.addAction(BLEService.ACTION_WRITE_OVER);
 		bluetoothReceiver = new BluetoothReceiver();
 		// 注册广播接收器
 		registerReceiver(bluetoothReceiver, intentFilter);
@@ -88,46 +96,116 @@ public class ServiceActivity extends Activity {
 				}
 				return;
 			}
+			// 数据改变通知
+			if (BLEService.ACTION_DATA_CHANGE.equals(action)) {
+				mBluetoothGattCharacteristic = (BluetoothGattCharacteristic)getIntent()
+						.getSerializableExtra("characteristic");
+				UUID uuid = mBluetoothGattCharacteristic.getUuid();
+				Log.e("TAG","数据有变化");
+				if(uuid.equals(SampleGattAttributes.PusleCharacteristic)){
+					String PulseData16 = String.valueOf(mBluetoothGattCharacteristic.getValue());//得到characteristic的值
+//					String PulseCutFlag =PulseData16.substring(2);//去掉进制标识位
+					String PulseData10 = Integer.valueOf(PulseData16, 16).toString();//将16进制数转换为10进制然后转为字符串
+					Log.e("TAG", "接收到数据");
+//					DataPlay.setText(PulseData10);
+
+				}else if(uuid.equals(SampleGattAttributes.ECGCharacteristic)){
+					mBluetoothGattCharacteristic.getValue();
+
+				}else if (uuid.equals(SampleGattAttributes.SoundCharacteristic)){
+					mBluetoothGattCharacteristic.getValue();
+				}
+				return;
+			}
+			// 读取脉搏数据
+			if (BLEService.ACTION_PULSE_READ_OVER.equals(action)) {
+				Log.e(TAG,"准备读取脉搏特征值");
+				String Pulse = intent.getStringExtra(BLEService.Pulse);
+     			Log.e(TAG, Pulse);
+				pulsePlay.setText(Pulse);
+				return;
+			}
+			//读取心音数据
+			if (BLEService.ACTION_SOUND_READ_OVER.equals(action)) {
+				Log.e(TAG, "准备读取心音特征值");
+				String sound = intent.getStringExtra(BLEService.Sound);
+				Log.e(TAG, sound);
+				soundPlay.setText(sound);
+				return;
+			}
+			/*if (BLEService.ACTION_ECG_READ_OVER.equals(action)) {
+				Log.e(TAG, "准备读取特征值");
+				String ecg = intent.getStringExtra(BLEService.ECG);
+				Log.e(TAG, ecg);
+				pulsePlay.setText(ecg);
+			*//*	String ECG = intent.getStringExtra(BLEService.ECG);
+				Log.e(TAG,ECG);
+				ecgPlay.setText(Pulse);*//*
+				return;
+			}*/
+
+
 
 		}
 	}
-
-	// 初始化控件
-	private List<List<BluetoothGattCharacteristic>> mBluetoothGattCharacteristic; // 记录所有特征
-	private ExpandableListView service_list_view;
-	private SimpleExpandableListAdapter service_list_adapter;
-	private List<Map<String, String>> grounps;// 一级条目
-	private List<List<Map<String, String>>> childs;// 二级条目
-
-	private void initView() {
-		service_list_view = (ExpandableListView) findViewById(R.id.service_list_view);
-
-		grounps = new ArrayList<Map<String, String>>();
-		childs = new ArrayList<List<Map<String, String>>>();
-		mBluetoothGattCharacteristic = new ArrayList<List<BluetoothGattCharacteristic>>();
-		service_list_adapter = new SimpleExpandableListAdapter(this, grounps,
-				R.layout.service_grounp_fmt, new String[] { "name", "Uuid" },
-				new int[] { R.id.grounpname_txt, R.id.grounp_uuid_txt },
-				childs, R.layout.service_child_fmt, new String[] { "name",
-						"prov", "uuid" }, new int[] { R.id.childname_txt,
-						R.id.prov, R.id.child_uuid_txt });
-		service_list_view.setAdapter(service_list_adapter);
-		service_list_view.setOnChildClickListener(new OnChildClickListener() {
-
+	private void initView(){
+		pulsePlay = (TextView)findViewById(R.id.pulsePlay);
+		ecgPlay = (TextView)findViewById(R.id.ecgPlay);
+		soundPlay = (TextView)findViewById(R.id.soundPlay);
+		mToggleButton = (ToggleButton)findViewById(R.id.Realstart);
+		mToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
-			public boolean onChildClick(ExpandableListView parent, View v,
-					int groupPosition, int childPosition, long id) {
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if(isChecked){
+					Timer pulseTimer = new Timer();
+					pulseTimer.schedule(new pulseTask(), 0, 5);
+					Timer soundTimer = new Timer();
+					soundTimer.schedule(new soundTask(), 0, 5);
+					/*Timer ecgTimer = new Timer();
+					ecgTimer.schedule(new ecgTask(),0,5);*/
+					return;
 
-				Intent intent = new Intent(getApplicationContext(),
-						TalkActivity.class);
-				intent.putExtra("one", groupPosition);
-				intent.putExtra("two", childPosition);
-				startActivityForResult(intent, 0);
-				//startActivity(intent);
-				return false;
+				}else {
+
+
+				}
 			}
 		});
 	}
+	class pulseTask extends TimerTask {
+
+		@Override
+		public void run() {
+			Tools.mBLEService.mBluetoothGatt.readCharacteristic(gattCharacteristicPulse);
+//			Tools.mBLEService.mBluetoothGatt.readCharacteristic(gattCharacteristicSound);
+			//			Tools.mBLEService.mBluetoothGatt.readCharacteristic(gattCharacteristicECG);
+
+		}
+	}
+	class soundTask extends TimerTask {
+
+		@Override
+		public void run() {
+//			Tools.mBLEService.mBluetoothGatt.readCharacteristic(gattCharacteristicPulse);
+			Tools.mBLEService.mBluetoothGatt.readCharacteristic(gattCharacteristicSound);
+			//			Tools.mBLEService.mBluetoothGatt.readCharacteristic(gattCharacteristicECG);
+
+		}
+
+	}
+	class ecgTask extends TimerTask {
+
+		@Override
+		public void run() {
+//			Tools.mBLEService.mBluetoothGatt.readCharacteristic(gattCharacteristicPulse);
+//			Tools.mBLEService.mBluetoothGatt.readCharacteristic(gattCharacteristicSound);
+			Tools.mBLEService.mBluetoothGatt.readCharacteristic(gattCharacteristicECG);
+
+		}
+
+	}
+
+
 
 	// 获取名字
 	private boolean read_name_flag = false;
@@ -140,7 +218,7 @@ public class ServiceActivity extends Activity {
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			service_list_adapter.notifyDataSetChanged();
+//			service_list_adapter.notifyDataSetChanged();
 			pd.dismiss();
 		}
 	};
@@ -162,7 +240,7 @@ public class ServiceActivity extends Activity {
 			finish();
 		};
 	};
-	
+
 	private ProgressDialog pd;
 	private Handler reflashDialogMessage = new Handler(){
 		@Override
@@ -200,6 +278,7 @@ public class ServiceActivity extends Activity {
 					System.out.println("conectBle");
 					if(exit_activity)return;  // 如果已经退出程序，则结束线程
 					Tools.mBLEService.conectBle(device);
+
 					for (int j = 0; j < 50; j++) {
 						if (connect_flag) {
 							break;
@@ -216,91 +295,29 @@ public class ServiceActivity extends Activity {
 			}
 			
 			read_name_flag = false; // 读取设备名
-			List<BluetoothGattService> services = Tools.mBLEService.mBluetoothGatt
-					.getServices();
-			
-			System.out.println("services.size-->"+services.size());
-			if(services.size() == 0){
+
+			BluetoothGattService service = Tools.mBLEService.mBluetoothGatt
+					.getService(SampleGattAttributes.HeartService);
+
+			Log.e("TAG", "得到服务");
+			if(service == null){
+				Log.e("TAG", "连接服务失败");
 				if(device.getBondState() == BluetoothDevice.BOND_BONDED){
 					readNameFail.sendEmptyMessage(0);
 				}
 				return;
 			}
-
-			String uuid;
 			b.putString("msg", "读取通道信息");
 			reflashDialogMessage.sendMessage(msg);
-			grounps.clear();
-			childs.clear();
-			for (BluetoothGattService service : services) {
-				uuid = service.getUuid().toString();
-				List<BluetoothGattCharacteristic> gattCharacteristics = service
-						.getCharacteristics();
-				if(gattCharacteristics.size() == 0){
-					continue;
-				}
-				// 添加一个一级目录
-				Map<String, String> grounp = new HashMap<String, String>();
-				grounp.put("name",
-						SampleGattAttributes.lookup(uuid, "unknow"));
-				grounp.put("Uuid", uuid);
-				grounps.add(grounp);
-				List<BluetoothGattCharacteristic> grounpCharacteristic = new ArrayList<BluetoothGattCharacteristic>();
-
-				List<Map<String, String>> child = new ArrayList<Map<String, String>>();
-
-				for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
-					Map<String, String> child_data = new HashMap<String, String>(); // 添加一个二级条目
-					uuid = gattCharacteristic.getUuid().toString();
-					BluetoothGattDescriptor descriptor = gattCharacteristic
-							.getDescriptor(UUID
-									.fromString("00002901-0000-1000-8000-00805f9b34fb"));
-					if (null != descriptor) {
-						read_name_flag = false;
-						Tools.mBLEService.mBluetoothGatt
-								.readDescriptor(descriptor);
-						while (!read_name_flag) {// 等待读取完成
-							if (exit_activity || bind_flag){
-								bind_flag = false;
-								System.out.println("read fail");
-								return; // 读取超时，结束线程
-							}
-						}
-						try {
-							child_data.put("name",
-									new String(descriptor.getValue(),
-											"GB2312"));
-						} catch (UnsupportedEncodingException e) {
-							e.printStackTrace();
-						}
-					} else {
-						child_data
-								.put("name", SampleGattAttributes.lookup(
-										uuid, "unknow"));
-					}
-
-					String pro = "";
-					if (0 != (gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ)) { // 可读
-						pro += "可读,";
-					}
-					if ((0 != (gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_WRITE)) ||
-						(0 != (gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE))) { // 可写
-						pro += "可写,";
-					}
-					if ((0 != (gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY)) ||
-						(0 != (gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_INDICATE))	) { // 通知
-						pro += "可通知";
-					}
-					child_data.put("prov", pro);
-					child_data.put("uuid", uuid);
-					child.add(child_data);
-					grounpCharacteristic.add(gattCharacteristic);
-				}
-				childs.add(child); // 一个一级条目添加完成
-				mBluetoothGattCharacteristic.add(grounpCharacteristic);
-			}
-			
+		    gattCharacteristicPulse =service
+					.getCharacteristic(SampleGattAttributes.PusleCharacteristic);
+			Log.e("TAG", "得到脉搏特征");
+		    gattCharacteristicECG =service
+					.getCharacteristic(SampleGattAttributes.ECGCharacteristic);
+			gattCharacteristicSound =service
+					.getCharacteristic(SampleGattAttributes.SoundCharacteristic);
 			dis_services_handl.sendEmptyMessage(0);
+
 		}
 	}
 

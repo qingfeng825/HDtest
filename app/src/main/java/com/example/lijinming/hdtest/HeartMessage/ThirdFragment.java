@@ -16,7 +16,7 @@ import android.widget.Spinner;
 import android.widget.ToggleButton;
 
 import com.example.lijinming.hdtest.DataManage.MyInternalStorage;
-import com.example.lijinming.hdtest.DataPlayBack.WaveView;
+import com.example.lijinming.hdtest.WaveShow.DataPlayBack.WaveView;
 import com.example.lijinming.hdtest.R;
 
 import java.io.BufferedReader;

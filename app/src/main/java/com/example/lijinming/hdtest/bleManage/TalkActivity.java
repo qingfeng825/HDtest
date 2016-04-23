@@ -61,23 +61,34 @@ public class TalkActivity extends Activity implements OnClickListener {
 		// 创建一个IntentFilter对象，将其action指定为BluetoothDevice.ACTION_FOUND
 		IntentFilter intentFilter = new IntentFilter(
 				BLEService.ACTION_DATA_CHANGE);
-		intentFilter.addAction(BLEService.ACTION_READ_OVER);
+		intentFilter.addAction(BLEService.ACTION_PULSE_READ_OVER);
 		intentFilter.addAction(BLEService.ACTION_RSSI_READ);
 		intentFilter.addAction(BLEService.ACTION_STATE_CONNECTED);
 		intentFilter.addAction(BLEService.ACTION_STATE_DISCONNECTED);
 		intentFilter.addAction(BLEService.ACTION_WRITE_OVER);
 		bluetoothReceiver = new BroadcastReceiver() {
-
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				String action = intent.getAction();
 				// 数据改变通知
 				if (BLEService.ACTION_DATA_CHANGE.equals(action)) {
-					dis_recive_msg(intent.getByteArrayExtra("value"));
+					mBluetoothGattCharacteristic = (BluetoothGattCharacteristic)getIntent()
+							.getSerializableExtra("characteristic");
+					UUID uuid = mBluetoothGattCharacteristic.getUuid();
+					if(uuid.equals(SampleGattAttributes.PusleCharacteristic)){
+						mBluetoothGattCharacteristic.getValue();
+
+
+					}else if(uuid.equals(SampleGattAttributes.ECGCharacteristic)){
+						mBluetoothGattCharacteristic.getValue();
+
+					}else if (uuid.equals(SampleGattAttributes.SoundCharacteristic)){
+						mBluetoothGattCharacteristic.getValue();
+					}
 					return;
 				}
 				// 读取数据
-				if (BLEService.ACTION_READ_OVER.equals(action)) {
+				if (BLEService.ACTION_PULSE_READ_OVER.equals(action)) {
 					dis_recive_msg(intent.getByteArrayExtra("value"));
 					return;
 				}

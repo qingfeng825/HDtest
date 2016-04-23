@@ -140,19 +140,15 @@ public class BLEActivity extends Activity {
 	};
 
 	private void initView() {
-		Log.e(TAG, "initView");
 		mInflater = LayoutInflater.from(this);
 		ble_listview = (ListView) findViewById(R.id.ble_listview);
-
 		ble_listview.setAdapter(list_adapter);
-		Log.e(TAG, "initView1");
 		ble_listview.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				// scan_flag = false;
-				// Tools.mBLEService.stopscanBle(mLeScanCallback);
+
 				Intent intent = new Intent(getApplicationContext(),
 						ServiceActivity.class);
 				intent.putExtra("device", scan_devices_dis.get(position)

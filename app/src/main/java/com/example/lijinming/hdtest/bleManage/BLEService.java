@@ -13,15 +13,27 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 public class BLEService extends Service {
+	private static final String TAG = "BLEService";
+	public final static String Pulse = "PulseCharacteristic";
+	public final static String ECG = "ECGCharacteristic";
+	public final static String Sound = "SoundCharacteristic";
+
 
 	public final static String ACTION_DATA_CHANGE = "com.example.bluetooth.le.ACTION_DATA_CHANGE";
 	public final static String ACTION_RSSI_READ = "com.example.bluetooth.le.ACTION_RSSI_READ";
 	public final static String ACTION_STATE_CONNECTED = "com.example.bluetooth.le.ACTION_STATE_CONNECTED";
 	public final static String ACTION_STATE_DISCONNECTED = "com.example.bluetooth.le.ACTION_STATE_DISCONNECTED";
 	public final static String ACTION_WRITE_OVER = "com.example.bluetooth.le.ACTION_WRITE_OVER";
-	public final static String ACTION_READ_OVER = "com.example.bluetooth.le.ACTION_READ_OVER";
+
+	public final static String ACTION_PULSE_READ_OVER = "com.example.bluetooth.le.ACTION_PULSE_READ_OVER";//脉搏自定义广播
+	public final static String ACTION_ECG_READ_OVER = "com.example.bluetooth.le.ACTION_ECG_READ_OVER";//心电自定义广播
+	public final static String ACTION_SOUND_READ_OVER = "com.example.bluetooth.le.ACTION_SOUND_READ_OVER";//心音自定义广播
+
+
+
 	public final static String ACTION_READ_Descriptor_OVER = "com.example.bluetooth.le.ACTION_READ_Descriptor_OVER";
 	public final static String ACTION_ServicesDiscovered_OVER = "com.example.bluetooth.le.ACTION_ServicesDiscovered_OVER";
 
@@ -37,13 +49,14 @@ public class BLEService extends Service {
 				int newState) {
 			super.onConnectionStateChange(gatt, status, newState);
 			if (newState == BluetoothProfile.STATE_CONNECTED) { // 链接成功
+				Log.e(TAG, "蓝牙连接成功");
 				System.out.println("CONNECTED");
 				connect_flag = true;
 				mBluetoothGatt.discoverServices();
 				broadcastUpdate(ACTION_STATE_CONNECTED);
 
 			} else if (newState == BluetoothProfile.STATE_DISCONNECTED) { // 断开链接
-				System.out.println("UNCONNECTED");
+
 				connect_flag = false;
 				broadcastUpdate(ACTION_STATE_DISCONNECTED);
 			}
@@ -54,7 +67,7 @@ public class BLEService extends Service {
 		public void onServicesDiscovered(BluetoothGatt gatt, int status) {
 			super.onServicesDiscovered(gatt, status);
 			if (status == BluetoothGatt.GATT_SUCCESS) {
-				System.out.println("onServicesDiscovered");
+				Log.e(TAG, "发现服务");
 				broadcastUpdate(ACTION_ServicesDiscovered_OVER, status);
 			}
 		}
@@ -63,7 +76,6 @@ public class BLEService extends Service {
 		public void onDescriptorRead(BluetoothGatt gatt,
 				BluetoothGattDescriptor descriptor, int status) {
 			super.onDescriptorRead(gatt, descriptor, status);
-
 			broadcastUpdate(ACTION_READ_Descriptor_OVER, status);
 		}
 
@@ -71,26 +83,37 @@ public class BLEService extends Service {
 		public void onCharacteristicRead(BluetoothGatt gatt,
 				BluetoothGattCharacteristic characteristic, int status) {
 			super.onCharacteristicRead(gatt, characteristic, status);
-			
-			if (status == BluetoothGatt.GATT_SUCCESS) {
-				broadcastUpdate(ACTION_READ_OVER, characteristic.getValue());
+			if (characteristic.getUuid().equals(SampleGattAttributes.PusleCharacteristic)){
+				Log.e(TAG, "读取脉搏特征值");
+				broadcastUpdate(ACTION_PULSE_READ_OVER, characteristic);
+			}/*else if (characteristic.getUuid().equals(SampleGattAttributes.ECGCharacteristic)){
+				Log.e(TAG, "读取心电特征值");
+				broadcastUpdate(ACTION_ECG_READ_OVER, characteristic);
+			}*/else if (characteristic.getUuid().equals(SampleGattAttributes.SoundCharacteristic)){
+
+				Log.e(TAG, "读取心音特征值");
+				broadcastUpdate(ACTION_SOUND_READ_OVER, characteristic);
 			}
+
 		}
+
 
 		@Override
 		public void onCharacteristicChanged(BluetoothGatt gatt,
 				BluetoothGattCharacteristic characteristic) {
+			Log.e(TAG, "特征值发生变化");
+
 			super.onCharacteristicChanged(gatt, characteristic);
-			broadcastUpdate(ACTION_DATA_CHANGE, characteristic.getValue());
+			broadcastUpdate(ACTION_DATA_CHANGE, characteristic);
 		}
 		
 
-		@Override
+	/*	@Override
 		public void onCharacteristicWrite(BluetoothGatt gatt,
 				BluetoothGattCharacteristic characteristic, int status) {
 			super.onCharacteristicWrite(gatt, characteristic, status);
 			broadcastUpdate(ACTION_WRITE_OVER, status);
-		}
+		}*/
 
 	};
 
@@ -160,6 +183,7 @@ public class BLEService extends Service {
 		
 		mBluetoothGatt = device_tmp.connectGatt(getApplicationContext(), false,
 				mGattCallback);
+
 		return true;
 	}
 		
@@ -179,23 +203,62 @@ public class BLEService extends Service {
 		return connect_flag;
 	}
 	
-	// 发送广播消息
+	// CONNECTED与DISCONNECTED    发送广播消息
 	private void broadcastUpdate(final String action) {
 		final Intent intent = new Intent(action);
 		sendBroadcast(intent);
 	}
 
-	// 发送广播消息
+	// service与Descriptor     发送广播消息
 	private void broadcastUpdate(final String action, int value) {
 		final Intent intent = new Intent(action);
 		intent.putExtra("value", value);
 		sendBroadcast(intent);
 	}
 
-	// 发送广播消息
-	private void broadcastUpdate(final String action, byte value[]) {
-		final Intent intent = new Intent(action);
-		intent.putExtra("value", value);
-		sendBroadcast(intent);
+	//DataChange与Read      发送广播消息
+	private void broadcastUpdate(final String action, BluetoothGattCharacteristic characteristic) {
+		Log.e("TAG", "特征等待发送");
+		Intent intent = new Intent(action);
+		if(characteristic.getUuid().equals(SampleGattAttributes.PusleCharacteristic)){
+			//将接收的特征值转换为原来的进制，然后转为字符串。
+			final byte[] data = characteristic.getValue();
+			if (data != null && data.length > 0) {
+				final StringBuilder stringBuilder = new StringBuilder(data.length);
+				for (byte byteChar : data)
+					stringBuilder.append(String.format("%02X ", byteChar));
+
+				String PulseCut = stringBuilder.toString().replaceAll(" ", "");//去除字符中所有的空格
+				Log.e(TAG,PulseCut);
+				String PulseData10 = Integer.valueOf(PulseCut, 16).toString();//将16进制数转换为10进制数然后在转为字符串
+				Log.e(TAG, PulseData10);
+				//			intent.putExtra(Key, new String(data) + "\n" + stringBuilder.toString());
+				intent.putExtra(Pulse,PulseData10);
+			}
+			sendBroadcast(intent);
+			Log.e("TAG", "脉搏特征发送成功");
+		}else if(characteristic.getUuid().equals(SampleGattAttributes.SoundCharacteristic)){
+			final byte[] data = characteristic.getValue();
+			if (data != null && data.length > 0) {
+				final StringBuilder stringBuilder = new StringBuilder(data.length);
+				for (byte byteChar : data)
+					stringBuilder.append(String.format("%02X ", byteChar));
+
+				String soundCut = stringBuilder.toString().replaceAll(" ", "");//去除字符中所有的空格
+				Log.e(TAG,soundCut);
+				String soundData10 = Integer.valueOf(soundCut, 16).toString();//将16进制数转换为10进制数然后在转为字符串
+				Log.e(TAG, soundData10);
+				//			intent.putExtra(Key, new String(data) + "\n" + stringBuilder.toString());
+				intent.putExtra(Sound,soundData10);
+			}
+			sendBroadcast(intent);
+			Log.e("TAG", "心音特征发送成功");
+		}/*else if (characteristic.getUuid().equals(SampleGattAttributes.ECGCharacteristic)){
+
+
+		}*/
+
+
 	}
 }
+
