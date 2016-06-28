@@ -3,6 +3,7 @@ package com.example.lijinming.hdtest.HeartMessage;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.Fragment;
@@ -103,7 +104,8 @@ public class FirstFragment extends Fragment {
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                str = parent.getItemAtPosition(position).toString();
+                String pathname =parent.getItemAtPosition(position).toString();//获取Spinner列表项的名称
+                str = Environment.getExternalStorageDirectory()+"/MyDATA/"+pathname;//将文件目录名称补全
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {

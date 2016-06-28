@@ -154,7 +154,11 @@ public class MyInternalStorage {
         File [] files  =  file.listFiles();
         List <String> pathname = new ArrayList<>();
         for (File f:files){
-            pathname.add(f.toString());
+            String dirName =f.toString();
+            String cut = dirName.substring(27);//将目录名称去掉
+            pathname.add(cut);
+
+            //            pathname.add(f.toString());
         }
         return pathname;
     }
@@ -164,9 +168,10 @@ public class MyInternalStorage {
         List <String> pathname = new ArrayList<>();
             for (File f:files){
                 String dirName =f.toString();
-                int size = dirName.indexOf("Pulse");//将脉搏的数据文件搜出来
+                String cut = dirName.substring(27);//将目录名称去掉
+                int size = cut.indexOf("Pulse");//将脉搏的数据文件搜出来
                 if (size != -1){
-                    pathname.add(dirName);
+                    pathname.add(cut);
                 }
             }
         if(pathname.isEmpty()){
@@ -182,9 +187,10 @@ public class MyInternalStorage {
 
         for (File f:files){
             String dirName =f.toString();
-            int size = dirName.indexOf("ECG");//将心电的数据文件搜出来
+            String cut = dirName.substring(27);//将目录名称去掉
+            int size = cut.indexOf("ECG");//将心电的数据文件搜出来
             if (size != -1){
-                pathname.add(dirName);
+                pathname.add(cut);
             }
         }
         if(pathname.isEmpty()){
@@ -200,9 +206,10 @@ public class MyInternalStorage {
 
         for (File f:files){
             String dirName =f.toString();
-            int size = dirName.indexOf("Sound");//将心音的数据文件搜出来
+            String cut = dirName.substring(27);//将目录名称去掉
+            int size = cut.indexOf("Sound");//将心音的数据文件搜出来
             if (size != -1){
-                pathname.add(dirName);
+                pathname.add(cut);
             }
         }
         if(pathname.isEmpty()){

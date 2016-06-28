@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -136,8 +137,10 @@ public class DataManageFragment extends Fragment implements View.OnClickListener
                 querydata.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        String pathname = mMyInternalStorage.queryAllFile().get(position);
-                        showDialog(getContext(),pathname);
+                        String pathname =parent.getItemAtPosition(position).toString();//获取Spinner列表项的名称
+                       String str = Environment.getExternalStorageDirectory()+"/MyDATA/"+pathname;//将文件目录名称补全
+//                        String pathname = mMyInternalStorage.queryAllFile().get(position);
+                        showDialog(getContext(),str);
 //                        Toast.makeText(getContext(), pathname, Toast.LENGTH_SHORT).show();
                     }
                 });
