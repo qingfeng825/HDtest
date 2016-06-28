@@ -40,7 +40,6 @@ public class BLEActivity extends Activity {
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
 
-
 		}
 
 		@Override

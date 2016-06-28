@@ -10,6 +10,14 @@
         android:textOff="停止"
         android:textOn="开始"
         android:checked="false"/>
+  <!--  <Switch
+        android:id="@+id/startReceive"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textOn="开始"
+        android:textOff="结束"
+        android:checked="false"
+    />-->
     <TableLayout android:layout_width="match_parent"
                  android:layout_height="wrap_content">
         <TableRow>
@@ -54,7 +62,6 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_weight="1"
-
                 android:layout_height="wrap_content"
                 android:text="ECG"/>
 

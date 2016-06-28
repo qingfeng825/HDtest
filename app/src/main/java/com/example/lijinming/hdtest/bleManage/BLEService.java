@@ -15,6 +15,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.util.UUID;
+
 public class BLEService extends Service {
 	private static final String TAG = "BLEService";
 	public final static String Pulse = "PulseCharacteristic";
@@ -38,8 +40,8 @@ public class BLEService extends Service {
 	public final static String ACTION_ServicesDiscovered_OVER = "com.example.bluetooth.le.ACTION_ServicesDiscovered_OVER";
 
 	public  BluetoothManager mBluetoothManager;
-	public  BluetoothAdapter mBluetoothAdapter;
-	public  BluetoothGatt mBluetoothGatt;
+	public static BluetoothAdapter mBluetoothAdapter;
+	public static BluetoothGatt mBluetoothGatt;
 	private boolean connect_flag = false;
 
 	private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
@@ -83,18 +85,18 @@ public class BLEService extends Service {
 		public void onCharacteristicRead(BluetoothGatt gatt,
 				BluetoothGattCharacteristic characteristic, int status) {
 			super.onCharacteristicRead(gatt, characteristic, status);
-			if (characteristic.getUuid().equals(SampleGattAttributes.PusleCharacteristic)){
+			/*if (characteristic.getUuid().equals(SampleGattAttributes.PusleCharacteristic)){
 				Log.e(TAG, "读取脉搏特征值");
 				broadcastUpdate(ACTION_PULSE_READ_OVER, characteristic);
-			}/*else if (characteristic.getUuid().equals(SampleGattAttributes.ECGCharacteristic)){
+			}*//*else if (characteristic.getUuid().equals(SampleGattAttributes.ECGCharacteristic)){
 				Log.e(TAG, "读取心电特征值");
 				broadcastUpdate(ACTION_ECG_READ_OVER, characteristic);
-			}*/else if (characteristic.getUuid().equals(SampleGattAttributes.SoundCharacteristic)){
+			}else if (characteristic.getUuid().equals(SampleGattAttributes.SoundCharacteristic)){
 
 				Log.e(TAG, "读取心音特征值");
 				broadcastUpdate(ACTION_SOUND_READ_OVER, characteristic);
 			}
-
+*/
 		}
 
 
@@ -104,7 +106,17 @@ public class BLEService extends Service {
 			Log.e(TAG, "特征值发生变化");
 
 			super.onCharacteristicChanged(gatt, characteristic);
-			broadcastUpdate(ACTION_DATA_CHANGE, characteristic);
+			if (characteristic.getUuid().equals(SampleGattAttributes.PusleCharacteristic)){
+				Log.e(TAG, "读取脉搏特征值");
+				broadcastUpdate(ACTION_PULSE_READ_OVER, characteristic);
+			}else if (characteristic.getUuid().equals(SampleGattAttributes.ECGCharacteristic)){
+				Log.e(TAG, "读取脉搏特征值");
+				broadcastUpdate(ACTION_ECG_READ_OVER, characteristic);
+			}if (characteristic.getUuid().equals(SampleGattAttributes.PusleCharacteristic)){
+				Log.e(TAG, "读取脉搏特征值");
+				broadcastUpdate(ACTION_SOUND_READ_OVER, characteristic);
+			}
+
 		}
 		
 
@@ -228,15 +240,26 @@ public class BLEService extends Service {
 				for (byte byteChar : data)
 					stringBuilder.append(String.format("%02X ", byteChar));
 
-				String PulseCut = stringBuilder.toString().replaceAll(" ", "");//去除字符中所有的空格
-				Log.e(TAG,PulseCut);
-				String PulseData10 = Integer.valueOf(PulseCut, 16).toString();//将16进制数转换为10进制数然后在转为字符串
-				Log.e(TAG, PulseData10);
-				//			intent.putExtra(Key, new String(data) + "\n" + stringBuilder.toString());
-				intent.putExtra(Pulse,PulseData10);
+				String PulseCutSpace = stringBuilder.toString().replaceAll(" ", "");//去除字符中所有的空格
+				intent.putExtra(Pulse,PulseCutSpace);
+				sendBroadcast(intent);
+
+				Log.e(TAG, "脉搏特征发送成功");
+
 			}
 			sendBroadcast(intent);
-			Log.e("TAG", "脉搏特征发送成功");
+			Log.e(TAG, "脉搏特征发送成功");
+		}else if(characteristic.getUuid().equals(SampleGattAttributes.ECGCharacteristic)){
+			final byte[] data = characteristic.getValue();
+			if (data != null && data.length > 0) {
+				final StringBuilder stringBuilder = new StringBuilder(data.length);
+				for (byte byteChar : data)
+					stringBuilder.append(String.format("%02X ", byteChar));
+
+				String ecgCut = stringBuilder.toString().replaceAll(" ", "");//去除字符中所有的空格
+			}
+			sendBroadcast(intent);
+			Log.e(TAG, "心音特征发送成功");
 		}else if(characteristic.getUuid().equals(SampleGattAttributes.SoundCharacteristic)){
 			final byte[] data = characteristic.getValue();
 			if (data != null && data.length > 0) {
@@ -252,13 +275,60 @@ public class BLEService extends Service {
 				intent.putExtra(Sound,soundData10);
 			}
 			sendBroadcast(intent);
-			Log.e("TAG", "心音特征发送成功");
-		}/*else if (characteristic.getUuid().equals(SampleGattAttributes.ECGCharacteristic)){
-
-
-		}*/
+			Log.e(TAG, "心音特征发送成功");
+		}
 
 
 	}
+	/*//由于readCharacteristic方法不行，所以改用notification通知
+	*//**
+	 * Enables or disables notification on a give characteristic.
+	 *
+	 * @param characteristic Characteristic to act on.
+	 * @param enabled If true, enable notification.  False otherwise.
+	 */
+	public static void setCharacteristicNotification(BluetoothGattCharacteristic characteristic,
+													 boolean enabled) {
+		Log.w(TAG, "进入通知设置");
+		if (mBluetoothAdapter == null || mBluetoothGatt == null) {
+			Log.w(TAG, "BluetoothAdapter not initialized");
+			return;
+		}
+		mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
+		Log.w(TAG, "Descriptor设置");
+
+		// 设置脉搏特征的通知，被动等待通知不会遗漏数据（保证接收到的数据完整性）
+		if (SampleGattAttributes.PusleCharacteristic.equals(characteristic.getUuid())) {
+			BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
+					UUID.fromString(SampleGattAttributes.CLIENT_PulseCHARACTERISTIC_CONFIG));
+			descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+			Log.w(TAG, "Descriptor设置成功");
+			mBluetoothGatt.writeDescriptor(descriptor);
+		}else if (SampleGattAttributes.ECGCharacteristic.equals(characteristic.getUuid())) {
+			BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
+					UUID.fromString(SampleGattAttributes.CLIENT_ECGCHARACTERISTIC_CONFIG));
+			descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+			mBluetoothGatt.writeDescriptor(descriptor);
+		}else if (SampleGattAttributes.SoundCharacteristic.equals(characteristic.getUuid())) {
+			BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
+					UUID.fromString(SampleGattAttributes.CLIENT_SoundCHARACTERISTIC_CONFIG));
+			descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+			mBluetoothGatt.writeDescriptor(descriptor);
+		}
+	}
+	/*/**
+	 * Request a read on a given {@code BluetoothGattCharacteristic}. The read result is reported
+	 * asynchronously through the {@code BluetoothGattCallback#onCharacteristicRead(android.bluetooth.BluetoothGatt, android.bluetooth.BluetoothGattCharacteristic, int)}
+	 * callback.
+	 *
+	 * @param characteristic The characteristic to read from.
+	 *//*
+	public static void readCharacteristic(BluetoothGattCharacteristic characteristic) {
+		if (mBluetoothAdapter == null || mBluetoothGatt == null) {
+			Log.w(TAG, "BluetoothAdapter not initialized");
+			return;
+		}
+		mBluetoothGatt.readCharacteristic(characteristic);
+	}*/
 }
 

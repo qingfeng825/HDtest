@@ -1,3 +1,4 @@
+/*
 package com.example.lijinming.hdtest.bleManage;
 
 import android.app.Activity;
@@ -23,10 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.example.lijinming.hdtest.DataManage.MyInternalStorage;
 import com.example.lijinming.hdtest.R;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -36,7 +35,7 @@ public class TalkActivity extends Activity implements OnClickListener {
 
 	private BluetoothGattCharacteristic mBluetoothGattCharacteristic;
 
-	MyInternalStorage mMyInternalStorage = new MyInternalStorage(this);
+//	MyInternalStorage mMyInternalStorage = new MyInternalStorage(this);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -149,11 +148,13 @@ public class TalkActivity extends Activity implements OnClickListener {
 			break;
 		}
 		readText.setText(tmp);
-		try {
+		*/
+/*try {
 			mMyInternalStorage.append(tmp);//读到你一个数据就存入到SD Card
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*//*
+
 
 		//		ChatMsgFmt entity2 = new ChatMsgFmt("Device", tmp, MESSAGE_FROM.OTHERS);
 //		chat_list.add(entity2);
@@ -395,12 +396,15 @@ public class TalkActivity extends Activity implements OnClickListener {
 		if (0 == tmp_str.length())
 			return null;
 		// 显示
-		if (dis_flag) {
+		*/
+/*if (dis_flag) {
 			writeText.setText(tmp_str);
-			/*ChatMsgFmt entity = new ChatMsgFmt("Me", tmp_str, MESSAGE_FROM.ME);
+ChatMsgFmt entity = new ChatMsgFmt("Me", tmp_str, MESSAGE_FROM.ME);
 			chat_list.add(entity);
-			chat_list_adapter.notifyDataSetChanged();*/
-		}
+			chat_list_adapter.notifyDataSetChanged();
+
+		}*//*
+
 
 		return write_msg_byte;
 	}
@@ -432,3 +436,4 @@ public class TalkActivity extends Activity implements OnClickListener {
 	}
 
 }
+*/

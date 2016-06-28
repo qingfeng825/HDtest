@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">HDtest</string>
+    <string name="blue">蓝牙管理</string>
     <string name="inbox">实时显示</string>
     <string name="starred">波形回放</string>
     <string name="sent_mail">数据管理</string>
@@ -26,9 +27,9 @@
     <color name="textcolor">#fff</color>
     <color name="headView">#00a7ff</color>
     <color name="gray">#f3f3f3</color>
-    <string name="FirstFragment">心电回放</string>
-    <string name="SecondFragment">心音回放</string>
-    <string name="ThirdFragment">脉搏回放</string>
+    <string name="FirstFragment">心电波形</string>
+    <string name="SecondFragment">心音波形</string>
+    <string name="ThirdFragment">脉搏波形</string>
     <string name="ForthFragment">4</string>
     <string name="DataPlayBack">数据回放</string>
     <!--BLEManage-->

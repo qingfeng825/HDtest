@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.lijinming.hdtest.DataManage.DataManageFragment;
 import com.example.lijinming.hdtest.HealthProject.HealthFragment;
 import com.example.lijinming.hdtest.HeartMessage.FirstFragment;
 import com.example.lijinming.hdtest.HeartMessage.ForthFragment;
@@ -33,6 +34,7 @@ public class NavigationActivity extends NavigationLiveo implements
         SecondFragment.OnFragmentInteractionListener,
         ThirdFragment.OnFragmentInteractionListener,
         ForthFragment.OnFragmentInteractionListener,
+        DataManageFragment.OnFragmentInteractionListener,
         OnItemClickListener {
     private final static String TAG = "NavigationActivity";
     private HelpLiveo mHelpLiveo;
@@ -52,9 +54,11 @@ public class NavigationActivity extends NavigationLiveo implements
 
         // Creating items navigation
         mHelpLiveo = new HelpLiveo();
+        mHelpLiveo.add(getString(R.string.blue));
         mHelpLiveo.add(getString(R.string.inbox));
         // mHelpLiveo.addSubHeader(getString(R.string.categories)); //Item subHeader
         mHelpLiveo.add(getString(R.string.starred));
+
         mHelpLiveo.add(getString(R.string.sent_mail));
         // mHelpLiveo.add(getString(R.string.drafts), R.mipmap.ic_drafts_black_24dp);
         mHelpLiveo.addSeparator(); // Item separator
@@ -100,21 +104,28 @@ public class NavigationActivity extends NavigationLiveo implements
         }
 
     };
-
+/**
+ * 添加抽屉条目
+ * 没加入一个Fragment必须实现其Listener
+ **/
     @Override
     public void onItemClick(int position) {
         Fragment mFragment;
         FragmentManager mFragmentManager = getSupportFragmentManager();
         switch (position){
-            case 0:
+            case 1:
                 mFragment = HealthFragment.newInstance(mHelpLiveo.get(position).getName());
                 break;
-            case 1:
+            case 2:
                 mFragment = FragmentManage.newInstance(mHelpLiveo.get(position).getName());
+                break;
+            case 3:
+                mFragment = DataManageFragment.newInstance(mHelpLiveo.get(position).getName());
                 break;
 
             default:
                 mFragment = FragmentManage.newInstance(mHelpLiveo.get(position).getName());
+
                 break;
         }
         if (mFragment != null){
