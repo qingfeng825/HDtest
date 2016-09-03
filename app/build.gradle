@@ -28,6 +28,12 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'br.com.liveo:navigationdrawer-material:2.4'
     compile 'com.android.support:support-v4:23.3.0'
-    compile files('F:/AS/GitHub/HDtest/HDtest/libs/gson-2.2.4.jar')
-    compile files('F:/AS/GitHub/HDtest/HDtest/libs/scs-android-sdk-0.0.1-SNAPSHOT.jar')
+    //    compile files('F:/AS/GitHub/HDtest/HDtest/libs/gson-2.2.4.jar')
+    //    compile files('F:/AS/GitHub/HDtest/HDtest/libs/scs-android-sdk-0.0.1-SNAPSHOT.jar')
+    compile files('H:/Android/Github/HDtest/libs/scs-android-sdk-0.0.1-SNAPSHOT.jar')
+    compile files('H:/Android/Github/HDtest/libs/gson-2.2.4.jar')
+}
+//http://blog.csdn.net/sljjyy/article/details/11976099
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
 }

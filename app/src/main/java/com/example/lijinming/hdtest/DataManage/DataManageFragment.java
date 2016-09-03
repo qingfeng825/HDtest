@@ -37,7 +37,7 @@ public class DataManageFragment extends Fragment implements View.OnClickListener
     private static final String ARG_PARAM2 = "param2";
 
     private MyInternalStorage mMyInternalStorage;
-    private SaveToCloud mSaveToCloud;
+    private SaveToCloud mSaveToCloud = new SaveToCloud(getActivity());
     private EditText writeText;
     private TextView readText;
     private ListView querydata;
