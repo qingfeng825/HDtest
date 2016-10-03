@@ -38,7 +38,7 @@ public class ServiceActivity extends Activity {
 	private BluetoothGattCharacteristic mBluetoothGattCharacteristic, gattCharacteristicPulse,
 			gattCharacteristicECG,gattCharacteristicSound,mNotifyCharacteristic;
 
-	private ToggleButton mToggleButton;
+	private ToggleButton pulseButton,soundButton,ecgButton;
 	private Switch mSwitch;
 	private TextView pulsePlay,ecgPlay,soundPlay;
 	private BLEService mBLEService;
@@ -117,135 +117,113 @@ public class ServiceActivity extends Activity {
 			// 读取脉搏数据
 			if (BLEService.ACTION_PULSE_READ_OVER.equals(action)) {
 				Log.e(TAG,"接收到脉搏通知");
-				String PulseCutSpace = intent.getStringExtra(BLEService.Pulse);
+				String pulseCutSpace = intent.getStringExtra(BLEService.Pulse);
 				//将脉搏数据进行分割，既是将一个数据包分成20个数据
 				int k = 0;
 				for (int i = 0; i < 20;i++){
-					String Str = PulseCutSpace.substring(k,k+2);
+					String Str = pulseCutSpace.substring(k,k+2);
 					k = k+2;
-					String PulseData10 = Integer.valueOf(Str, 16).toString();//将16进制数转换为10进制数然后在转为字符串
+					String pulseData10 = Integer.valueOf(Str, 16)
+							.toString();//将16进制数转换为10进制数然后在转为字符串
 					try {
-						mMyInternalStorage.appendPusle(PulseData10);//将脉搏数据存入到SDcard以时间加脉搏命名的文件中
+						mMyInternalStorage.appendPusle(pulseData10);//将脉搏数据存入到SDcard以时间加脉搏命名的文件中
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 					//					pulsePlay.setText(PulseData10);
-					Log.e(TAG, PulseData10);
+					Log.e(TAG, pulseData10);
 				}
-
-
 				return;
-			}
-			//读取心音数据
+			}//读取心音数据
 			if (BLEService.ACTION_SOUND_READ_OVER.equals(action)) {
 				Log.e(TAG, "准备读取心音特征值");
-				String sound = intent.getStringExtra(BLEService.Sound);
-				Log.e(TAG, sound);
-				soundPlay.setText(sound);
+				String soundCutSpace = intent.getStringExtra(BLEService.Sound);
+				int k = 0;
+				for (int i = 0; i < 20;i++){
+					String Str = soundCutSpace.substring(k,k+2);
+					k = k+2;
+					String soundData10 = Integer.valueOf(Str, 16).toString();//将16进制数转换为10进制数然后在转为字符串
+					try {
+						mMyInternalStorage.appendSound(soundData10);//将心音数据存入到SDcard以时间加脉搏命名的文件中
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					//					pulsePlay.setText(PulseData10);
+					Log.e(TAG, soundData10);
+				}
+				//soundPlay.setText(soundData10);
 				return;
 			}
-			/*if (BLEService.ACTION_ECG_READ_OVER.equals(action)) {
-				Log.e(TAG, "准备读取特征值");
-				String ecg = intent.getStringExtra(BLEService.ECG);
-				Log.e(TAG, ecg);
-				pulsePlay.setText(ecg);
-			*//*	String ECG = intent.getStringExtra(BLEService.ECG);
-				Log.e(TAG,ECG);
-				ecgPlay.setText(Pulse);*//*
+			if (BLEService.ACTION_ECG_READ_OVER.equals(action)) {
+				Log.e(TAG, "准备读取心电特征值");
+				String ecgCutSpace = intent.getStringExtra(BLEService.ECG);
+				int k = 0;
+				for (int i = 0; i < 20;i++){
+					String Str = ecgCutSpace.substring(k,k+2);
+					k = k+2;
+					String ecgData10 = Integer.valueOf(Str, 16).toString();//将16进制数转换为10进制数然后在转为字符串
+					try {
+						mMyInternalStorage.appendECG(ecgData10);//将心电数据存入到SDcard以时间加脉搏命名的文件中
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					Log.e(TAG, ecgData10);
+				}
 				return;
-			}*/
+			}
 
 
 
 		}
 	}
 	private void initView(){
-
-		pulsePlay = (TextView)findViewById(R.id.pulsePlay);
-		ecgPlay = (TextView)findViewById(R.id.ecgPlay);
-		soundPlay = (TextView)findViewById(R.id.soundPlay);
-		/*mSwitch = (Switch)findViewById(R.id.startReceive);
-		mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+		mMyInternalStorage = new MyInternalStorage(getApplication());
+		pulseButton = (ToggleButton)findViewById(R.id.startPulse);
+		pulseButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if(isChecked){
-					mMyInternalStorage =new MyInternalStorage(getApplication());
 					notificationFlag =true;
 					setNotify(gattCharacteristicPulse,notificationFlag);
-				}else {
-					notificationFlag =false;
-					setNotify(gattCharacteristicPulse,notificationFlag);
-				}
-			}
-		});*/
-		mToggleButton = (ToggleButton)findViewById(R.id.Realstart);
-		mToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if(isChecked){
-					//开辟线程以指定的速率读书特征值
-
-					mMyInternalStorage =new MyInternalStorage(getApplication());
-//					Timer soundTimer = new Timer();
-//					soundTimer.schedule(new soundTask(), 2, 10);
-//					Timer ecgTimer = new Timer();
-//					ecgTimer.schedule(new ecgTask(),0,5);
-					notificationFlag =true;
-					setNotify(gattCharacteristicPulse,notificationFlag);
-//					setNotify(gattCharacteristicSound);
 					return;
 
 				}else {
 					notificationFlag =false;
 					setNotify(gattCharacteristicPulse,notificationFlag);
-//					readCharacterFlag = false;
-//					Pulse(readCharacterFlag);
+				}
+			}
+		});
+		soundButton = (ToggleButton)findViewById(R.id.startSound);
+		soundButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if(isChecked){
+					notificationFlag =true;
+					setNotify(gattCharacteristicSound,notificationFlag);
+					return;
+				}else {
+					notificationFlag =false;
+					setNotify(gattCharacteristicSound,notificationFlag);
+				}
+			}
+		});
+		ecgButton = (ToggleButton)findViewById(R.id.startECG);
+		ecgButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if(isChecked){
+					notificationFlag =true;
+					setNotify(gattCharacteristicECG,notificationFlag);
+					return;
+				}else {
+					notificationFlag =false;
+					setNotify(gattCharacteristicECG,notificationFlag);
 				}
 			}
 		});
 	}
-	/*public  void  Pulse (Boolean readCharacterFlag){
-		if (readCharacterFlag){
-			Tools.mBLEService.mBluetoothGatt.readCharacteristic(gattCharacteristicPulse);
-		}
-
-
-	}
-	class pulseTask extends TimerTask {
-
-		@Override
-		public void run() {
-			if (readCharacterFlag){
-//				Log.e(TAG,"TimerTaskTest");
-				Tools.mBLEService.mBluetoothGatt.readCharacteristic(gattCharacteristicPulse);
-				Log.e(TAG, "TimerTaskTest1");
-			}
-		}
-	}
-	class soundTask extends TimerTask {
-
-		@Override
-		public void run() {
-			if (readCharacterFlag){
-				Tools.mBLEService.mBluetoothGatt.readCharacteristic(gattCharacteristicSound);
-			}
-//			Tools.mBLEService.mBluetoothGatt.readCharacteristic(gattCharacteristicPulse);
-			//	    	Tools.mBLEService.mBluetoothGatt.readCharacteristic(gattCharacteristicECG);
-
-		}
-
-	}
-	class ecgTask extends TimerTask {
-
-		@Override
-		public void run() {
-//			Tools.mBLEService.mBluetoothGatt.readCharacteristic(gattCharacteristicPulse);
-//			Tools.mBLEService.mBluetoothGatt.readCharacteristic(gattCharacteristicSound);
-			Tools.mBLEService.mBluetoothGatt.readCharacteristic(gattCharacteristicECG);
-
-		}
-
-	}*/
 
 
 
@@ -273,14 +251,6 @@ public class ServiceActivity extends Activity {
 		}
 		
 	};
-	/*private Handler connect_fail_handl = new Handler() {
-		public void handleMessage(Message msg) {
-			Tools.mBLEService.disConectBle();
-			Toast.makeText(getApplicationContext(), "连接失败",
-					Toast.LENGTH_LONG).show();
-			finish();
-		}
-	};*/
 
 	private ProgressDialog pd;
 	private Handler reflashDialogMessage = new Handler(){

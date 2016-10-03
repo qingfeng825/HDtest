@@ -4,73 +4,26 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     <ToggleButton
-        android:id="@+id/Realstart"
+        android:id="@+id/startPulse"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textOff="停止"
-        android:textOn="开始"
+        android:textOff="停止采集脉搏"
+        android:textOn="开始采集脉搏"
         android:checked="false"/>
-  <!--  <Switch
-        android:id="@+id/startReceive"
+    <ToggleButton
+        android:id="@+id/startSound"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textOn="开始"
-        android:textOff="结束"
-        android:checked="false"
-    />-->
-    <TableLayout android:layout_width="match_parent"
-                 android:layout_height="wrap_content">
-        <TableRow>
-            <TextView
-                android:id="@+id/pulsePlay"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="脉搏数据"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-
-                android:text="Pulse"/>
-
-        </TableRow>
-        <TableRow>
-            <TextView
-                android:id="@+id/soundPlay"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-
-                android:text="心音数据"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-
-                android:layout_height="wrap_content"
-                android:text="Sound"/>
-
-        </TableRow>
-        <TableRow>
-            <TextView
-                android:id="@+id/ecgPlay"
-                android:layout_weight="1"
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="心电数据"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="ECG"/>
-
-        </TableRow>
-
-
-    </TableLayout>
-
-
+        android:textOff="停止采集心音"
+        android:textOn="开始采集心音"
+        android:checked="false"/>
+    <ToggleButton
+        android:id="@+id/startECG"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textOff="停止采集心电"
+        android:textOn="开始采集心电"
+        android:checked="false"/>
 
 
 </LinearLayout>

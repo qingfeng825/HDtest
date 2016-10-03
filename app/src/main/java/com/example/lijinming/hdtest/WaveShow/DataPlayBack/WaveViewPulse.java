@@ -93,7 +93,7 @@ public class WaveViewPulse extends SurfaceView implements Callback,Runnable{
                         oldX = x;oldY1 = y1;
                         surfaceHolder.unlockCanvasAndPost(canvas);//解锁画布
                     }
-                    xpos += 4;
+                    xpos += 8;
             }
         };
         Looper.loop();//循环等待

@@ -117,7 +117,7 @@ public class ThirdFragment extends Fragment {
             path = pathname;
         }
         /**
-         * 将读取的数据进行处理然后发送给波形显示模块*/
+         * 将读取的数据进行处理然后发送给脉搏波形显示模块*/
         @Override
         public void run() {
             FileInputStream in = null;
