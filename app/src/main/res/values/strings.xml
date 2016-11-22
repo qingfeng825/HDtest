@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">HDtest</string>
-    <string name="blue">蓝牙管理</string>
+    <string name="blue">蓝牙通信</string>
     <string name="inbox">实时显示</string>
-    <string name="starred">波形回放</string>
+    <string name="starred">波形显示</string>
     <string name="sent_mail">数据管理</string>
     <string name="settings">设置</string>\
     <string name="account">账号</string>

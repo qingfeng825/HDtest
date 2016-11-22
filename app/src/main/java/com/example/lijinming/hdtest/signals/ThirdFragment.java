@@ -1,4 +1,4 @@
-package com.example.lijinming.hdtest.HeartMessage;
+package com.example.lijinming.hdtest.signals;
 
 import android.app.Activity;
 import android.net.Uri;
@@ -18,9 +18,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.example.lijinming.hdtest.DataManage.MyInternalStorage;
+import com.example.lijinming.hdtest.dataManage.MyInternalStorage;
 import com.example.lijinming.hdtest.R;
-import com.example.lijinming.hdtest.WaveShow.DataPlayBack.WaveViewECG;
+import com.example.lijinming.hdtest.WaveShow.WavePlay.WaveViewPulse;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,41 +28,39 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link FirstFragment.OnFragmentInteractionListener} interface
+ * {@link ThirdFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link FirstFragment#newInstance} factory method to
+ * Use the {@link ThirdFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FirstFragment extends Fragment {
+public class ThirdFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private String mParam1;private String mParam2;
     private OnFragmentInteractionListener mListener;
     private MyInternalStorage mMyInternalStorage;
     private Spinner mSpinner;private ToggleButton mButton;
-    String str;Boolean flag;private WaveViewECG mWaveViewECG;
+    String str;Boolean flag;private WaveViewPulse mWaveViewPulse;
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
      * @return A new instance of fragment ThirdFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static FirstFragment newInstance(String param1, String param2) {
-        FirstFragment fragment = new FirstFragment();
+    public static ThirdFragment newInstance(String param1, String param2) {
+        ThirdFragment fragment = new ThirdFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
-    public FirstFragment() {
+    public ThirdFragment() {
         // Required empty public constructor
     }
     @Override
@@ -79,27 +77,27 @@ public class FirstFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_first, container, false);
-        mWaveViewECG = (WaveViewECG) view.findViewById(R.id.surfaceViewECG);
+        View view = inflater.inflate(R.layout.fragment_third, container, false);
+        mWaveViewPulse = (WaveViewPulse) view.findViewById(R.id.surfaceViewPulse);
         mMyInternalStorage = new MyInternalStorage(getContext());
-        mButton = (ToggleButton)view.findViewById(R.id.ecgStart);
+        mButton = (ToggleButton)view.findViewById(R.id.start);
         mButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    flag = true;
-                    mWaveViewECG.ClearDraw();
+                    flag = true;//给读取线程设置旗帜
+                    mWaveViewPulse.ClearDraw();//绘图之前进行清屏
                     GetDataThread mGetDataThread = new GetDataThread(str);
                     Thread mThread = new Thread(mGetDataThread);
-                    mThread.start();
+                    mThread.start();//开始读取数据
                 }else {
                     flag = false;
                 }
             }
         });
-        mSpinner = (Spinner)view.findViewById(R.id.ecgPlayBack);
+        mSpinner = (Spinner)view.findViewById(R.id.pulsePlayBack);
         ArrayAdapter<String> fileArray = new ArrayAdapter<String>(getContext(),
-                android.R.layout.simple_list_item_1,mMyInternalStorage.queryECGFile());
+                android.R.layout.simple_list_item_1,mMyInternalStorage.queryPulseFile());
         mSpinner.setAdapter(fileArray);
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -119,7 +117,7 @@ public class FirstFragment extends Fragment {
             path = pathname;
         }
         /**
-         * 将读取的数据进行处理然后发送给波形显示模块*/
+         * 将读取的数据进行处理然后发送给脉搏波形显示模块*/
         @Override
         public void run() {
             FileInputStream in = null;
@@ -131,16 +129,24 @@ public class FirstFragment extends Fragment {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-            Log.e("filename", String.valueOf(filename));
-            if(in!=null){
+//            Log.e("filename", String.valueOf(filename));
+            //filename对应的文件不为空则进行读取操作
+            if(in !=null){
                 reader = new BufferedReader(new InputStreamReader(in));
                 String line;
                 try {
                     while ((line = reader.readLine()) != null&flag) {
-                        Message msg = WaveViewECG.chartHandler.obtainMessage();
+                        Message msg = WaveViewPulse.chartHandler.obtainMessage();
+                    /*float fy = Float.parseFloat(line);
+                    int iY = (int) (fy * 1000000);
+                    String sY = String.valueOf(iY);
+                    String cut = sY.substring(2);
+                    Log.e("CUT", cut);
+                    int iy = Integer.parseInt(cut);
+                    int Y = iy * -1;*/
                         int Y = Integer.parseInt(line);
                         msg.what = Y;
-                        WaveViewECG.chartHandler.sendMessage(msg);
+                        WaveViewPulse.chartHandler.sendMessage(msg);
                         Log.e("TAG", String.valueOf(msg.what));
                         try {
                             Thread.sleep(20);
@@ -166,7 +172,6 @@ public class FirstFragment extends Fragment {
                 Toast.makeText(getContext(),"请先接收数据",Toast.LENGTH_SHORT).show();
                 Looper.loop();
             }
-
 
         }
     }
@@ -209,27 +214,27 @@ public class FirstFragment extends Fragment {
     public void onStop() {
         super.onStop();
         mButton.setChecked(false);
-        mWaveViewECG.ClearDraw();
+        mWaveViewPulse.ClearDraw();
     }
     @Override
     public void onPause() {
         super.onPause();
         super.onStop();
         mButton.setChecked(false);
-        mWaveViewECG.ClearDraw();
+        mWaveViewPulse.ClearDraw();
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
         super.onStop();
         mButton.setChecked(false);
-        mWaveViewECG.ClearDraw();
+        mWaveViewPulse.ClearDraw();
     }
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         super.onStop();
         mButton.setChecked(false);
-        mWaveViewECG.ClearDraw();
+        mWaveViewPulse.ClearDraw();
     }
 }

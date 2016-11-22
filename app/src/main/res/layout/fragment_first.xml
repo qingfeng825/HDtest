@@ -2,7 +2,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="com.example.lijinming.hdtest.HeartMessage.FirstFragment">
+             tools:context="com.example.lijinming.hdtest.signals.FirstFragment">
 
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="match_parent"
@@ -11,7 +11,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <com.example.lijinming.hdtest.WaveShow.DataPlayBack.WaveViewECG
+            <com.example.lijinming.hdtest.WaveShow.WavePlay.WaveViewECG
                 android:id="@+id/surfaceViewECG"
                 android:layout_width="0dp"
                 android:layout_height="400dp"

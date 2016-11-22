@@ -56,7 +56,7 @@
             android:layout_below="@+id/login_edit_account"
             android:layout_marginRight="1.0dip"
             android:background="@drawable/qq_edit_login"
-            android:inputType="number"
+            android:inputType="textPassword"
             android:maxLength="16"
             android:paddingLeft="45.0sp"
             android:saveEnabled="true" />

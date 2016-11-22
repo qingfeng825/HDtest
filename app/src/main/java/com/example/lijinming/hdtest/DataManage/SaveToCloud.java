@@ -1,4 +1,4 @@
-package com.example.lijinming.hdtest.DataManage;
+package com.example.lijinming.hdtest.dataManage;
 
 import android.content.Context;
 import android.util.Log;
@@ -41,11 +41,11 @@ public class SaveToCloud {
             if(localFile.exists()){
                 Log.e(TAG,"本地文件存在");
                 conn.putObject("qingfeng",pathname ,localFile);
-                Toast.makeText(context, "上传成功", Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(context.this, "上传成功", Toast.LENGTH_SHORT).show();
                 Log.e(TAG,"UpLoad success");
             }else{
                 Log.e(TAG,"上传失败");
-                Toast.makeText(context,"本地文件不存在，请先点击下载文件！",Toast.LENGTH_SHORT).show();
+               // Toast.makeText(context,"本地文件不存在，请先点击下载文件！",Toast.LENGTH_SHORT).show();
 
             }
         }else{

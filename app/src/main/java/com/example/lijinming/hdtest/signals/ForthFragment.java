@@ -1,4 +1,4 @@
-package com.example.lijinming.hdtest.HeartMessage;
+package com.example.lijinming.hdtest.signals;
 
 import android.app.Activity;
 import android.net.Uri;

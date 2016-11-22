@@ -1,4 +1,4 @@
-package com.example.lijinming.hdtest.HeartMessage;
+package com.example.lijinming.hdtest.signals;
 
 import android.app.Activity;
 import android.net.Uri;
@@ -18,9 +18,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.example.lijinming.hdtest.DataManage.MyInternalStorage;
+import com.example.lijinming.hdtest.dataManage.MyInternalStorage;
 import com.example.lijinming.hdtest.R;
-import com.example.lijinming.hdtest.WaveShow.DataPlayBack.WaveViewSound;
+import com.example.lijinming.hdtest.WaveShow.WavePlay.WaveViewSound;
 
 import java.io.BufferedReader;
 import java.io.File;

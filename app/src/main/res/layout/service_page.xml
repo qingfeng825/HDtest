@@ -7,22 +7,22 @@
         android:id="@+id/startPulse"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textOff="停止采集脉搏"
-        android:textOn="开始采集脉搏"
+        android:textOff="开始采集脉搏"
+        android:textOn="停止采集脉搏"
         android:checked="false"/>
     <ToggleButton
         android:id="@+id/startSound"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textOff="停止采集心音"
-        android:textOn="开始采集心音"
+        android:textOff="开始采集心音"
+        android:textOn="停止采集心音"
         android:checked="false"/>
     <ToggleButton
         android:id="@+id/startECG"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textOff="停止采集心电"
-        android:textOn="开始采集心电"
+        android:textOff="开始采集心电"
+        android:textOn="停止采集心电"
         android:checked="false"/>
 
 

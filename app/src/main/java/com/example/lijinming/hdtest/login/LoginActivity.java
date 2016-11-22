@@ -3,6 +3,7 @@ package com.example.lijinming.hdtest.login;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -36,6 +37,8 @@ public class LoginActivity extends Activity {
 		mRegisterButton = (Button) findViewById(R.id.login_btn_register);
 		mLoginButton = (Button) findViewById(R.id.login_btn_login);
 		mCancleButton = (Button) findViewById(R.id.login_btn_cancle);
+		//隐藏密码
+		mPwd.setTransformationMethod(PasswordTransformationMethod.getInstance());
 		/*loginView=findViewById(R.id.login_view);
 		loginSuccessView=findViewById(R.id.login_success_view);
 		loginSuccessShow=(TextView) findViewById(R.id.login_success_show);*/
@@ -67,22 +70,22 @@ public class LoginActivity extends Activity {
 	};
 
 	public void login() {
+		//验证用户信息
 		if (isUserNameAndPwdValid()) {
 			String userName = mAccount.getText().toString().trim();
 			String userPwd = mPwd.getText().toString().trim();
+			//与数据库中的用户信息进行匹配
 			int result=mUserDataManager.findUserByNameAndPwd(userName, userPwd);
 			if(result==1){
-				//login success
-				/*loginView.setVisibility(View.GONE);
-				loginSuccessView.setVisibility(View.VISIBLE);
-				loginSuccessShow.setText(getString(R.string.user_login_sucess, userName));*/
+				//登录成功，然后进入导航界面
 				Intent intent = new Intent(LoginActivity.this, NavigationActivity.class);
 				intent.putExtra("username",userName);
 				startActivity(intent);
+				//提醒登录成功
 				Toast.makeText(this, getString(R.string.login_sucess),
 						Toast.LENGTH_SHORT).show();
 			}else if(result==0){
-				//login failed,user does't exist
+				//提醒登录失败，此用户不存在
 				Toast.makeText(this, getString(R.string.login_fail),
 						Toast.LENGTH_SHORT).show();
 			}
@@ -90,25 +93,28 @@ public class LoginActivity extends Activity {
 	}
 
 	public void register() {
-		if (isUserNameAndPwdValid()) {
+		//注册用户
+		if (isUserNameAndPwdValid()) {//用户账号及密码是否有效
 			String userName = mAccount.getText().toString().trim();
 			String userPwd = mPwd.getText().toString().trim();
-			//check if user name is already exist
+			//检查用户是否已经存在
 			int count=mUserDataManager.findUserByName(userName);
-			
 			if(count>0){
+				//提醒用户账号已经存在无需再次注册
 				Toast.makeText(this, getString(R.string.name_already_exist, userName),
 						Toast.LENGTH_SHORT).show();
 				return ;
 			}
-			
 			UserData mUser = new UserData(userName, userPwd);
 			mUserDataManager.openDataBase();
+			//在数据库中加入一个用户
 			long flag = mUserDataManager.insertUserData(mUser);
 			if (flag == -1) {
+				//提醒用户注册失败
 				Toast.makeText(this, getString(R.string.register_fail),
 						Toast.LENGTH_SHORT).show();
 			}else{
+				//提醒用户注册成功
 				Toast.makeText(this, getString(R.string.register_sucess),
 						Toast.LENGTH_SHORT).show();
 			}
@@ -116,10 +122,9 @@ public class LoginActivity extends Activity {
 	}
 
 	public void cancle() {
-		mAccount.setText("");
-		mPwd.setText("");
+		mAccount.setText("");//将输入的用户账号清除
+		mPwd.setText("");//将输入的用户密码清除
 	}
-
 	public boolean isUserNameAndPwdValid() {
 		if (mAccount.getText().toString().trim().equals("")) {
 			Toast.makeText(this, getString(R.string.account_empty),

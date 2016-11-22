@@ -222,17 +222,29 @@ public class BLEService extends Service {
 				Log.e(TAG, "脉搏特征发送成功");
 			}
 		}else if(characteristic.getUuid().equals(SampleGattAttributes.ECGCharacteristic)){
+			String ecgOriginalData,validData,ecgCut,verifyData;
 			final byte[] data = characteristic.getValue();
 			if (data != null && data.length > 0) {
 				final StringBuilder stringBuilder = new StringBuilder(data.length);
 				for (byte byteChar : data)
 					stringBuilder.append(String.format("%02X ", byteChar));
 
-				String ecgCut = stringBuilder.toString().replaceAll(" ", "");//去除字符中所有的空格
-				Log.e(TAG,ecgCut);
-				intent.putExtra(Sound,ecgCut);
-				sendBroadcast(intent);
-				Log.e(TAG, "心电特征发送成功");
+				ecgOriginalData = stringBuilder.toString().replaceAll(" ", "");//去除字符中所有的空格
+				//截取之后进行验证确保获取的心电数据有效
+				int validIndex = ecgOriginalData.indexOf("AAAA04");
+				if(validIndex<=16){
+					validData = ecgOriginalData.substring(validIndex+6,validIndex+16);
+					ecgCut = validData.substring(0,8);
+					verifyData = validData.substring(8,10);
+					boolean dataFlag = DataValid.isValid(ecgCut,verifyData);
+//					Log.e(TAG,ecgCut);
+					if(dataFlag){
+						Log.e(TAG,ecgCut);
+						intent.putExtra(ECG,ecgCut);
+						sendBroadcast(intent);
+						Log.e(TAG, "心电特征发送成功");
+					}
+				}
 			}
 
 		}else if(characteristic.getUuid().equals(SampleGattAttributes.SoundCharacteristic)){

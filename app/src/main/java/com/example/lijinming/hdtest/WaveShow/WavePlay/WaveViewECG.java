@@ -1,4 +1,4 @@
-package com.example.lijinming.hdtest.WaveShow.DataPlayBack;
+package com.example.lijinming.hdtest.WaveShow.WavePlay;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -14,12 +14,12 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.example.lijinming.hdtest.DataManage.MyInternalStorage;
+import com.example.lijinming.hdtest.dataManage.MyInternalStorage;
 
 /**
  * Created by Administrator on 2016/6/6.
  */
-public class WaveViewSound extends SurfaceView implements SurfaceHolder.Callback,Runnable {
+public class WaveViewECG extends SurfaceView implements SurfaceHolder.Callback,Runnable{
     private Context mContext;
     private SurfaceHolder surfaceHolder;
     MyInternalStorage mMyInternalStorage;
@@ -27,7 +27,7 @@ public class WaveViewSound extends SurfaceView implements SurfaceHolder.Callback
     private Thread thread;
     public static Handler chartHandler ;
     Paint[] paints = new Paint[3];
-    public WaveViewSound(Context context, AttributeSet attrs) {
+    public WaveViewECG(Context context, AttributeSet attrs) {
 
         super(context, attrs);
         //setBackgroundColor(Color.GREEN);
@@ -66,7 +66,7 @@ public class WaveViewSound extends SurfaceView implements SurfaceHolder.Callback
      * */
     @Override
     public void run() {
-        Looper.prepare();
+        Looper.prepare();//启用Looper
         chartHandler = new Handler() {
             public void handleMessage(Message msg) {
                 synchronized (surfaceHolder) {
@@ -74,16 +74,8 @@ public class WaveViewSound extends SurfaceView implements SurfaceHolder.Callback
                     Log.e("MSG", String.valueOf(y));
                     //如果x坐标超出屏幕宽度则让x坐标置0
                     if (xpos > mSurfaceWidth) xpos = 1;
-                    //                        y1 =(float)((y+2300000)/10-5700);
-                    //                        y1 =(float)((y+100000)/50);
                     y2 = y*-5;
                     y1 = mSurfaceHeight +y2;
-
-                    //y坐标的转换。把Y坐标通过下面的转换显示
-                        /*float average;
-                        average = (mSurfaceHeight/9);
-                        y2 = (float)(y)/10000+9;
-                        y1 = y2*average;*/
                     Canvas canvas = surfaceHolder.lockCanvas(new Rect(xpos, 0,
                             xpos + 10/*(int)(mSurfaceWidth)*/, (int) (mSurfaceHeight)));//锁定画布的一小块
                     canvas.drawColor(Color.BLACK);x = xpos;

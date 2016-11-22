@@ -19,7 +19,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.example.lijinming.hdtest.DataManage.MyInternalStorage;
+import com.example.lijinming.hdtest.dataManage.MyInternalStorage;
 import com.example.lijinming.hdtest.R;
 
 import java.io.IOException;
@@ -157,18 +157,19 @@ public class ServiceActivity extends Activity {
 			if (BLEService.ACTION_ECG_READ_OVER.equals(action)) {
 				Log.e(TAG, "准备读取心电特征值");
 				String ecgCutSpace = intent.getStringExtra(BLEService.ECG);
-				int k = 0;
-				for (int i = 0; i < 20;i++){
+				String ecgData10 = Long.valueOf(ecgCutSpace, 16).toString();//将16进制数转换为10进制数然后在转为字符串
+				try {
+					mMyInternalStorage.appendECG(ecgData10);//将心电数据存入到SDcard以时间加脉搏命名的文件中
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				/*int k = 0;
+				for (int i = 0; i < 4;i++){
 					String Str = ecgCutSpace.substring(k,k+2);
 					k = k+2;
-					String ecgData10 = Integer.valueOf(Str, 16).toString();//将16进制数转换为10进制数然后在转为字符串
-					try {
-						mMyInternalStorage.appendECG(ecgData10);//将心电数据存入到SDcard以时间加脉搏命名的文件中
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+
 					Log.e(TAG, ecgData10);
-				}
+				}*/
 				return;
 			}
 

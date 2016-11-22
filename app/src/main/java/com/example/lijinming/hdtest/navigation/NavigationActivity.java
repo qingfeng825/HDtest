@@ -11,13 +11,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.lijinming.hdtest.DataManage.DataManageFragment;
-import com.example.lijinming.hdtest.HealthProject.HealthFragment;
-import com.example.lijinming.hdtest.HeartMessage.FirstFragment;
-import com.example.lijinming.hdtest.HeartMessage.ForthFragment;
-import com.example.lijinming.hdtest.HeartMessage.FragmentManage;
-import com.example.lijinming.hdtest.HeartMessage.SecondFragment;
-import com.example.lijinming.hdtest.HeartMessage.ThirdFragment;
+import com.example.lijinming.hdtest.dataManage.DataManageFragment;
+import com.example.lijinming.hdtest.signals.FirstFragment;
+import com.example.lijinming.hdtest.signals.ForthFragment;
+import com.example.lijinming.hdtest.signals.FragmentManage;
+import com.example.lijinming.hdtest.signals.SecondFragment;
+import com.example.lijinming.hdtest.signals.ThirdFragment;
 import com.example.lijinming.hdtest.R;
 import com.example.lijinming.hdtest.bleManage.BLEActivity;
 
@@ -29,7 +28,6 @@ import br.liveo.navigationliveo.NavigationLiveo;
 
 public class NavigationActivity extends NavigationLiveo implements
         FragmentManage.OnFragmentInteractionListener,
-        HealthFragment.OnFragmentInteractionListener,
         FirstFragment.OnFragmentInteractionListener ,
         SecondFragment.OnFragmentInteractionListener,
         ThirdFragment.OnFragmentInteractionListener,
@@ -39,7 +37,6 @@ public class NavigationActivity extends NavigationLiveo implements
     private final static String TAG = "NavigationActivity";
     private HelpLiveo mHelpLiveo;
     private final static int REQUEST_ENABLE_BT = 2001;
-
 
     @Override
     public void onInt(Bundle savedInstanceState) {
@@ -55,7 +52,7 @@ public class NavigationActivity extends NavigationLiveo implements
         // Creating items navigation
         mHelpLiveo = new HelpLiveo();
         mHelpLiveo.add(getString(R.string.blue));
-        mHelpLiveo.add(getString(R.string.inbox));
+        //mHelpLiveo.add(getString(R.string.inbox));
         // mHelpLiveo.addSubHeader(getString(R.string.categories)); //Item subHeader
         mHelpLiveo.add(getString(R.string.starred));
 
@@ -68,7 +65,7 @@ public class NavigationActivity extends NavigationLiveo implements
         with(this, Navigation.THEME_DARK);//. add theme dark
         //with(this, Navigation.THEME_LIGHT). add theme light
         with(this) // default theme is dark
-                .startingPosition(2) //Starting position in the list
+                .startingPosition(1) //Starting position in the list
                 .addAllHelpItem(mHelpLiveo.getHelp())
                 .footerItem(R.string.settings, R.mipmap.ic_launcher)
 //                .footerSecondItem(R.string.BLEmanage,R.drawable.bluetooth)
@@ -93,12 +90,9 @@ public class NavigationActivity extends NavigationLiveo implements
         public void onClick(View v) {
         if(v.getId() ==R.id.footerDrawer) {
             closeDrawer();
-
             Toast.makeText(getBaseContext(), "this is 1", Toast.LENGTH_SHORT).show();
           }else {
             closeDrawer();
-              /*Intent intent = new Intent(getApplicationContext(), BLEActivity.class);
-                startActivity(intent);*/
             Toast.makeText(getBaseContext(), "this is 2", Toast.LENGTH_SHORT).show();
         }
         }
@@ -110,28 +104,27 @@ public class NavigationActivity extends NavigationLiveo implements
  **/
     @Override
     public void onItemClick(int position) {
-        Fragment mFragment;
+        Fragment mFragment = null;
         FragmentManager mFragmentManager = getSupportFragmentManager();
         switch (position){
+            case 0:
+                Intent intent = new Intent(NavigationActivity.this, BLEActivity.class);
+                startActivity(intent);
+                break;
             case 1:
-                mFragment = HealthFragment.newInstance(mHelpLiveo.get(position).getName());
+                mFragment = FragmentManage.newInstance(mHelpLiveo.get(position).getName());
                 break;
             case 2:
-                mFragment = FragmentManage.newInstance(mHelpLiveo.get(position).getName());
-                break;
-            case 3:
                 mFragment = DataManageFragment.newInstance(mHelpLiveo.get(position).getName());
                 break;
-
             default:
                 mFragment = FragmentManage.newInstance(mHelpLiveo.get(position).getName());
-
                 break;
         }
         if (mFragment != null){
             mFragmentManager.beginTransaction().replace(R.id.container, mFragment).commit();
         }
-        setElevationToolBar(position != 2 ? 15 : 0);
+        setElevationToolBar(position != 2? 15 : 0);
     }
 
     @Override

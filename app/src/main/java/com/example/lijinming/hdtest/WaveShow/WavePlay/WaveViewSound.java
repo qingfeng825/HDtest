@@ -1,8 +1,4 @@
-package com.example.lijinming.hdtest.WaveShow.DataPlayBack;
-
-/**
- * Created by lijinming on 2016/5/20.
- */
+package com.example.lijinming.hdtest.WaveShow.WavePlay;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -16,20 +12,22 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
-import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 
-import com.example.lijinming.hdtest.DataManage.MyInternalStorage;
+import com.example.lijinming.hdtest.dataManage.MyInternalStorage;
 
-public class WaveViewPulse extends SurfaceView implements Callback,Runnable{
-    private Context       mContext;
+/**
+ * Created by Administrator on 2016/6/6.
+ */
+public class WaveViewSound extends SurfaceView implements SurfaceHolder.Callback,Runnable {
+    private Context mContext;
     private SurfaceHolder surfaceHolder;
     MyInternalStorage mMyInternalStorage;
-    private int mSurfaceWidth,mSurfaceHeight;//å±å¹•å®½é«˜
+    private int mSurfaceWidth,mSurfaceHeight;//ÆÁÄ»¿í¸ß
     private Thread thread;
     public static Handler chartHandler ;
     Paint[] paints = new Paint[3];
-    public WaveViewPulse(Context context, AttributeSet attrs) {
+    public WaveViewSound(Context context, AttributeSet attrs) {
 
         super(context, attrs);
         //setBackgroundColor(Color.GREEN);
@@ -53,53 +51,53 @@ public class WaveViewPulse extends SurfaceView implements Callback,Runnable{
     }
     @Override
     public void surfaceCreated(SurfaceHolder arg0) {
-        mSurfaceWidth = getWidth();//å¾—åˆ°ç”»å¸ƒçš„å®½åº¦
-        mSurfaceHeight = getHeight();//å¾—åˆ°ç”»å¸ƒçš„é«˜åº¦
+        mSurfaceWidth = getWidth();//µÃµ½»­²¼µÄ¿í¶È
+        mSurfaceHeight = getHeight();//µÃµ½»­²¼µÄ¸ß¶È
         Log.e("Width", String.valueOf(mSurfaceWidth));
         Log.e("Height", String.valueOf(mSurfaceHeight));
         thread = new Thread(this);
-        thread.start();//å¼€å¯ç»˜åˆ¶çº¿ç¨‹
+        thread.start();//¿ªÆô»æÖÆÏß³Ì
     }
     int xpos = 1;
     int oldX = 0,x,y;
     int oldY1,y1,y2;
     /**
-     * å°†ä»SDCardè¯»å–çš„æ•°æ®ç»˜åˆ¶æˆæ³¢å½¢
+     * ½«´ÓSDCard¶ÁÈ¡µÄÊı¾İ»æÖÆ³É²¨ĞÎ
      * */
     @Override
     public void run() {
         Looper.prepare();
         chartHandler = new Handler() {
             public void handleMessage(Message msg) {
-                    synchronized (surfaceHolder) {
-                        y = msg.what;
-                        Log.e("MSG", String.valueOf(y));
-                        //å¦‚æœxåæ ‡è¶…å‡ºå±å¹•å®½åº¦åˆ™è®©xåæ ‡ç½®0
-                        if (xpos > mSurfaceWidth) xpos = 1;
-//                        y1 =(float)((y+2300000)/10-5700);
-//                        y1 =(float)((y+100000)/50);
-                        y2 = y*-5;
-                        y1 = mSurfaceHeight +y2;
+                synchronized (surfaceHolder) {
+                    y = msg.what;
+                    Log.e("MSG", String.valueOf(y));
+                    //Èç¹ûx×ø±ê³¬³öÆÁÄ»¿í¶ÈÔòÈÃx×ø±êÖÃ0
+                    if (xpos > mSurfaceWidth) xpos = 1;
+                    //                        y1 =(float)((y+2300000)/10-5700);
+                    //                        y1 =(float)((y+100000)/50);
+                    y2 = y*-5;
+                    y1 = mSurfaceHeight +y2;
 
-                        //yåæ ‡çš„è½¬æ¢ã€‚æŠŠYåæ ‡é€šè¿‡ä¸‹é¢çš„è½¬æ¢æ˜¾ç¤º
+                    //y×ø±êµÄ×ª»»¡£°ÑY×ø±êÍ¨¹ıÏÂÃæµÄ×ª»»ÏÔÊ¾
                         /*float average;
                         average = (mSurfaceHeight/9);
                         y2 = (float)(y)/10000+9;
                         y1 = y2*average;*/
-                        Canvas canvas = surfaceHolder.lockCanvas(new Rect(xpos, 0,
-                               xpos + 10/*(int)(mSurfaceWidth)*/, (int) (mSurfaceHeight)));//é”å®šç”»å¸ƒçš„ä¸€å°å—
-                        canvas.drawColor(Color.BLACK);x = xpos;
-                        canvas.drawLine(oldX, oldY1, x, y1, paints[0]);//ç»˜å›¾
-                        oldX = x;oldY1 = y1;
-                        surfaceHolder.unlockCanvasAndPost(canvas);//è§£é”ç”»å¸ƒ
-                    }
-                    xpos += 8;
+                    Canvas canvas = surfaceHolder.lockCanvas(new Rect(xpos, 0,
+                            xpos + 10/*(int)(mSurfaceWidth)*/, (int) (mSurfaceHeight)));//Ëø¶¨»­²¼µÄÒ»Ğ¡¿é
+                    canvas.drawColor(Color.BLACK);x = xpos;
+                    canvas.drawLine(oldX, oldY1, x, y1, paints[0]);//»æÍ¼
+                    oldX = x;oldY1 = y1;
+                    surfaceHolder.unlockCanvasAndPost(canvas);//½âËø»­²¼
+                }
+                xpos += 1;
             }
         };
-        Looper.loop();//å¾ªç¯ç­‰å¾…
+        Looper.loop();//Ñ­»·µÈ´ı
     }
     /**
-     * æ¸…ç†ç”»å¸ƒ
+     * ÇåÀí»­²¼
      * */
     public void ClearDraw(){
 
@@ -108,7 +106,7 @@ public class WaveViewPulse extends SurfaceView implements Callback,Runnable{
             canvas = surfaceHolder.lockCanvas(null);
             canvas.drawColor(Color.WHITE);
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.SRC);
-            xpos = 0;//æ¸…ç†ç”»å¸ƒä¹‹åxè½´èµ·ç‚¹é‡æ–°ç½®0
+            xpos = 0;//ÇåÀí»­²¼Ö®ºóxÖáÆğµãÖØĞÂÖÃ0
 
         }catch(Exception e){
 

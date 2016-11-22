@@ -23,8 +23,6 @@ public class UserDataManager {
 
 	public static final String USER_NAME = "user_name";
 	public static final String USER_PWD = "user_pwd";
-	public static final String SILENT = "silent";
-	public static final String VIBRATE = "vibrate";
 
 	private static final int DB_VERSION = 2;
 	private Context mContext = null;

@@ -1,4 +1,4 @@
-package com.example.lijinming.hdtest.DataManage;
+package com.example.lijinming.hdtest.dataManage;
 
 
 import android.app.AlertDialog;
@@ -37,7 +37,7 @@ public class DataManageFragment extends Fragment implements View.OnClickListener
     private static final String ARG_PARAM2 = "param2";
 
     private MyInternalStorage mMyInternalStorage;
-    private SaveToCloud mSaveToCloud;
+    private SaveToCloud mSaveToCloud = new SaveToCloud(getActivity());
     private EditText writeText;
     private TextView readText;
     private ListView querydata;
@@ -108,28 +108,6 @@ public class DataManageFragment extends Fragment implements View.OnClickListener
     public void onClick(View v) {
         int id = v.getId();
         switch (id){
-            /*case R.id.writebutton:
-                String write = writeText.getText().toString();
-                mMyInternalStorage.saveToSdcard(write);
-                Toast.makeText(getContext(),"write successful",Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.readbutton:
-                String read = null;
-                read = mMyInternalStorage.get();
-                if (!TextUtils.isEmpty(read)) {
-                    readText.setText(read);
-                    Toast.makeText(getContext(),"read successful",Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case R.id.append:
-                String add = writeText.getText().toString();
-                try {
-                    mMyInternalStorage.append(add);
-                    Toast.makeText(getContext(),"append successful",Toast.LENGTH_SHORT).show();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;*/
             case R.id.query:
                 ArrayAdapter<String> fileArray = new ArrayAdapter<String>(getContext(),
                         android.R.layout.simple_list_item_1,mMyInternalStorage.queryAllFile());

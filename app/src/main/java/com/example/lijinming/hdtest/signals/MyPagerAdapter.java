@@ -1,4 +1,4 @@
-package com.example.lijinming.hdtest.HeartMessage;
+package com.example.lijinming.hdtest.signals;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
